@@ -1,0 +1,15 @@
+{
+    "server":"_SERVER_IP_",
+    "server_port":"_SERVER_PORT_",
+    "local_address":"0.0.0.0",
+    "local_port":12345,
+    "password":"_PASSWORD_",
+    "timeout":3600,
+    "method":"chacha20-ietf-poly1305",
+    "reuse_port":true,
+    "fast_open":true,
+    "mode":"tcp_and_udp",
+    "nameserver":"8.8.8.8",
+    "plugin":"obfs-local",
+    "plugin_opts":"obfs=http;obfs-host=bing.com"
+}

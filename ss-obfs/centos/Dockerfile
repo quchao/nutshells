@@ -9,10 +9,6 @@ ENV SS_VERSION='3.0.6' \
     OBFS_SHA256='350c22e138202868d5726cb55e3d71e9962aad3306988a9f746b80d0e8998a75' \
     LIBSODIUM_VERSION='1.0.12' \
     LIBSODIUM_SHA256='b8648f1bb3a54b0251cf4ffa4f0d76ded13977d4fa7517d988f4c902dd8e2f95' \
-    LIBMBEDTLS_VERSION='2.4.2' \
-    LIBMBEDTLS_SHA256='b7afab6a0f86e29c6055848b70d183c4e2531cb0ec955b66c0e4e1b7e4954bf4' \
-    LIBUDNS_VERSION='0.4' \
-    LIBUDNS_SHA256='115108dc791a2f9e99e150012bcb459d9095da2dd7d80699b584ac0ac3768710' \
     LIBCORK_COMMIT='3bcb832' \
     LIBCORK_SHA256='c229dbfe754ec376f906043a35b1fb10725226c6c7136911cf817c92fc170959'
 
@@ -25,7 +21,9 @@ RUN set -ex; \
         libtool \
         make \
         pcre-devel \
-        libev-devel; \
+        libev-devel \
+        mbedtls-devel \
+        udns-devel; \
     # libsodium (v1.0.8+) \
     curl -LO https://github.com/jedisct1/libsodium/releases/download/${LIBSODIUM_VERSION}/libsodium-${LIBSODIUM_VERSION}.tar.gz; \
     echo "${LIBSODIUM_SHA256}  libsodium-${LIBSODIUM_VERSION}.tar.gz" | sha256sum -c; \
@@ -40,32 +38,6 @@ RUN set -ex; \
     ldconfig; \
     rm -f libsodium-${LIBSODIUM_VERSION}.tar.gz; \
     rm -rf libsodium-${LIBSODIUM_VERSION}; \
-    # libmbedtls
-    curl -LO https://github.com/ARMmbed/mbedtls/archive/mbedtls-${LIBMBEDTLS_VERSION}.tar.gz; \
-    echo "${LIBMBEDTLS_SHA256}  mbedtls-${LIBMBEDTLS_VERSION}.tar.gz" | sha256sum -c; \
-    tar xvf mbedtls-${LIBMBEDTLS_VERSION}.tar.gz; \
-    pushd mbedtls-mbedtls-${LIBMBEDTLS_VERSION}; \
-    make SHARED=1 CFLAGS=-fPIC; \
-    make DESTDIR=/usr install; \
-    popd; \
-    ldconfig; \
-    rm -f mbedtls-${LIBMBEDTLS_VERSION}.tar.gz; \
-    rm -rf mbedtls-mbedtls-${LIBMBEDTLS_VERSION}; \
-    # libudns
-    curl -LO http://www.corpit.ru/mjt/udns/udns-${LIBUDNS_VERSION}.tar.gz; \
-    echo "${LIBUDNS_SHA256}  udns-${LIBUDNS_VERSION}.tar.gz" | sha256sum -c; \
-    tar xvf udns-${LIBUDNS_VERSION}.tar.gz; \
-    pushd udns-${LIBUDNS_VERSION}; \
-    ./configure; \
-    make shared; \
-    cp udns.h /usr/include/; \
-    cp libudns.so.0 /usr/lib/; \
-    cd /usr/lib/; \
-    ln -s libudns.so.0 libudns.so; \
-    popd; \
-    ldconfig; \
-    rm -f udns-${LIBUDNS_VERSION}.tar.gz; \
-    rm -rf udns-${LIBUDNS_VERSION}; \
     # shadowsocks-libev
     curl -LO https://github.com/shadowsocks/shadowsocks-libev/releases/download/v${SS_VERSION}/shadowsocks-libev-${SS_VERSION}.tar.gz; \
     echo "${SS_SHA256}  shadowsocks-libev-${SS_VERSION}.tar.gz" | sha256sum -c; \

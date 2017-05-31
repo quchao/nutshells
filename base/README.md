@@ -2,7 +2,7 @@
 
 ## Contents:
 
-- `base`: The base img.
+- `base` - The base img.
     - `:latest` & `:edge` -  Based on `alpine:latest` and `alpine:edge`, includes [su-exec](https://github.com/ncopa/su-exec), a handy tool to exec cmds with different privileges in containers.
     - `:centos` - Based on `centos:latest` with [EPEL](https://fedoraproject.org/wiki/EPEL) & [gosu](https://github.com/tianon/gosu) pre-installed.
 

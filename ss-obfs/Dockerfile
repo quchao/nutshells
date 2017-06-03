@@ -1,12 +1,14 @@
 FROM quchao/base
-MAINTAINER Chao QU <mail@quchao.com>
+LABEL maintainer "Chao QU <mail@quchao.com>"
 
-ENV SS_VERSION='3.0.6' \
-    SS_SHA256='7d9b43b0235a57c115bfe160efd54abef96bffcbfff61c5496e7c2800f0734ca' \
-    OBFS_VERSION='0.0.3' \
-    OBFS_SHA256='350c22e138202868d5726cb55e3d71e9962aad3306988a9f746b80d0e8998a75' \
-    LIBCORK_COMMIT='3bcb832' \
-    LIBCORK_SHA256='c229dbfe754ec376f906043a35b1fb10725226c6c7136911cf817c92fc170959'
+WORKDIR /etc/shadowsocks-libev/
+
+ARG SS_VERSION="3.0.6"
+ARG SS_SHA256="7d9b43b0235a57c115bfe160efd54abef96bffcbfff61c5496e7c2800f0734ca"
+ARG OBFS_VERSION="0.0.3"
+ARG OBFS_SHA256="350c22e138202868d5726cb55e3d71e9962aad3306988a9f746b80d0e8998a75"
+ARG LIBCORK_COMMIT="3bcb832"
+ARG LIBCORK_SHA256="c229dbfe754ec376f906043a35b1fb10725226c6c7136911cf817c92fc170959"
 
 RUN set -ex; \
     mkdir -p /usr/local/src/; \
@@ -18,7 +20,6 @@ RUN set -ex; \
         automake \
         libtool \
         linux-headers \
-        curl \
     ; \
     # runtime deps
     apk add --no-cache --virtual .runtime-deps \
@@ -74,8 +75,14 @@ RUN set -ex; \
     chmod +x /usr/local/bin/docker-entrypoint.sh; \
     # User/Group
     addgroup -S shadowsocks; \
-    adduser -S -G shadowsocks shadowsocks;
+    adduser -S -D -H -h /var/empty -s /sbin/nologin -G shadowsocks shadowsocks;
+
+ENV APP_PORT="12345"
+
+HEALTHCHECK --interval=1m --timeout=3s \
+    CMD [ 1 == $(curl -f http://localhost:${APP_PORT} 2>&1 | grep 'curl: (52)' | wc -l) ] || exit 1
 
 ENTRYPOINT [ "docker-entrypoint.sh" ]
-EXPOSE 12345/tcp 12345/udp
 CMD [ "ss-server" ]
+
+EXPOSE ${APP_PORT}/tcp ${APP_PORT}/udp

@@ -1,18 +1,19 @@
 FROM alpine
-MAINTAINER Chao QU <mail@quchao.com>
+LABEL maintainer "Chao QU <mail@quchao.com>"
 
 # Keep up-to-date
 RUN set -ex; \
-    # change mirrors
+    # Change repo mirror
     sed -i 's/http:\/\/dl-cdn.alpinelinux.org/https:\/\/mirrors.aliyun.com/g' /etc/apk/repositories; \
     apk update; \
     apk upgrade; \
-    # runtime deps
+    # Runtime deps
     apk add --no-cache --virtual .common-deps \
         ca-certificates \
         su-exec \
+        curl \
     ; \
-    # update ca
+    # Update CAs
     update-ca-certificates --fresh; \
-    # cleaning
+    # Cleaning
     rm -rf /tmp/* /var/tmp/*;

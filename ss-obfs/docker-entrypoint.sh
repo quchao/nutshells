@@ -19,5 +19,5 @@ fi
 # exec ENTRYPOINT_COMMAND as specified user
 exec su-exec \
   $ENTRYPOINT_USER \
-  $ENTRYPOINT_CMD -c "/etc/shadowsocks-libev/${SS_MODE}.json" \
+  $ENTRYPOINT_CMD -c "${SS_MODE}.json" \
   $ENTRYPOINT_PARAMS

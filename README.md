@@ -1,6 +1,6 @@
 # Dockerfiles
 
-All images are based on [Alpine](http://alpinelinux.org/), a few of them can be built from [CentOS](https://www.centos.org/) alternatively, use at your own risk please.
+All images are based on [Alpine](http://alpinelinux.org/), a few of them offer a variant based on [CentOS](https://www.centos.org/) alternatively, use at your own risk please.
 
 ## Contents
 

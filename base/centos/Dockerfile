@@ -1,30 +1,30 @@
 FROM centos
-MAINTAINER Chao QU <mail@quchao.com>
+LABEL maintainer "Chao QU <mail@quchao.com>"
 
-WORKDIR /usr/local/src/
+WORKDIR /usr/bin/
 
-ENV GOSU_VERSION='1.10'
+ARG GOSU_VERSION="1.10"
 
-# Install EPEL
+# GoSU
 RUN set -ex; \
-    yum -y install epel-release; \
+    # EPEL
+    #yum -y install epel-release; \
+    # Keep up-to-date
     yum update -y --exclude=kernel*; \
-    yum clean all;
-
-# Install GoSU
-RUN set -ex; \
-    yum -y install dpkg; \
-	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-	curl -L -o /usr/bin/gosu "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${dpkgArch}"; \
-	curl -L -o /tmp/gosu.asc "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${dpkgArch}.asc"; \
+    ARCH="amd64"; \
+    GOSU_URL_BASE="https://github.com/tianon/gosu/releases/download/"; \
+	curl -L -o gosu "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}"; \
+	curl -L -o gosu.asc "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}.asc"; \
     # Verify the signature
-	export GNU_PG_HOME="$(mktemp -d)"; \
-	gpg --keyserver 'ha.pool.sks-keyservers.net' --recv-keys 'B42F6819007F00F88E364FD4036A9C25BF357DD4'; \
-	gpg --batch --verify /tmp/gosu.asc /usr/bin/gosu; \
-	rm -r "${GNU_PG_HOME}" /tmp/gosu.asc; \
+	GPG_HOME="$(mktemp -d)"; \
+    GPG_KEY_SRV="ha.pool.sks-keyservers.net"; \
+    GOSU_GPG_KEY="B42F6819007F00F88E364FD4036A9C25BF357DD4"; \
+	gpg --keyserver "${GPG_KEY_SRV}" --recv-keys "${GOSU_GPG_KEY}"; \
+	gpg --batch --verify gosu.asc gosu; \
+	rm -r "${GPG_HOME}" gosu.asc; \
     # Test flight
-	chmod +x /usr/bin/gosu; \
+	chmod +x gosu; \
 	gosu nobody true; \
 	# Cleaning
-	yum -y remove dpkg; \
-	yum clean all;
+	yum clean all; \
+    rm -rf /tmp/* /var/tmp/*;

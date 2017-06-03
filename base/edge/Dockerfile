@@ -1,5 +1,5 @@
 FROM alpine:edge
-MAINTAINER Chao QU <mail@quchao.com>
+LABEL maintainer "Chao QU <mail@quchao.com>"
 
 # Keep up-to-date
 RUN set -ex; \
@@ -14,6 +14,7 @@ RUN set -ex; \
     apk add --no-cache --virtual .common-deps \
         ca-certificates \
         su-exec \
+        curl \
     ; \
     # update ca
     update-ca-certificates --fresh; \

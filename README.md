@@ -1,5 +1,7 @@
 # Dockerfiles
 
+[![Build Status](https://travis-ci.org/QuChao/dockerfiles.svg?branch=master)](https://travis-ci.org/QuChao/dockerfiles)
+
 All images are based on [Alpine](http://alpinelinux.org/), a few of them offer a variant based on [CentOS](https://www.centos.org/) alternatively, use at your own risk please.
 
 ## Contents

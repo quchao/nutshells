@@ -1,3 +1,12 @@
+branches:
+  only:
+  - master
+  - travis-ci-test
+
+git:
+  depth: 1
+  submodules: false
+
 services:
   - docker
 

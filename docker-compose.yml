@@ -1,0 +1,27 @@
+version: "2"
+services:
+    base:
+        image: quchao/base
+        build: ./base
+
+    base-edge:
+        image: quchao/base:edge
+        build:
+            context: ./base
+            dockerfile: Dockerfile-edge
+
+    base-centos:
+        image: quchao/base:centos
+        build:
+            context: ./base
+            dockerfile: Dockerfile-centos
+
+    ss-obfs:
+        image: quchao/ss-obfs
+        build: ./ss-obfs
+
+    ss-obfs-centos:
+        image: quchao/ss-obfs:centos
+        build:
+            context: ./ss-obfs
+            dockerfile: Dockerfile-centos

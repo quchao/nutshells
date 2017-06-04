@@ -18,11 +18,11 @@ docker build -q=false --rm=true -t quchao/base .
 Based on Alpine `edge`:
 
 ``` bash
-docker build -q=false --rm=true -t quchao/base:edge -f ./edge/Dockerfile .
+docker build -q=false --rm=true -t quchao/base:edge -f ./Dockerfile-edge .
 ```
 
 Based on CentOS:
 
 ``` bash
-docker build -q=false --rm=true -t quchao/base:centos -f ./centos/Dockerfile .
+docker build -q=false --rm=true -t quchao/base:centos -f ./Dockerfile-centos .
 ```

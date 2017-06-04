@@ -20,7 +20,7 @@ docker build -q=false --rm=true -t quchao/ss-obfs .
 Based on CentOS:
 
 ``` bash
-docker build -q=false --rm=true -t quchao/ss-obfs:centos -f ./centos/Dockerfile .
+docker build -q=false --rm=true -t quchao/ss-obfs:centos -f ./Dockerfile-centos .
 ```
 
 ### Run

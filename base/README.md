@@ -3,7 +3,7 @@
 [![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Repo](https://img.shields.io/badge/Docker-Repo-22B8EB.svg)](https://hub.docker.com/r/nutshells/base/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](http://alpinelinux.org/) [![CentOS Based](https://img.shields.io/badge/CentOS-7.3-932279.svg)](https://www.centos.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE)
 
 
-## <a name="variants"></a>Variants:
+## Variants:
 
 | Tag | Description | 🐳 |
 |:-- |:-- |:--:|

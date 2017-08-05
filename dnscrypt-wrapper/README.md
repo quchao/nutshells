@@ -25,7 +25,7 @@ docker run [OPTIONS] nutshells/dnscrypt-wrapper [COMMAND] [ARG...]
 ### Getting Started
 
 A DNScrypt proxy server cannot go without a so-called **provider key pair**.
-It's rather easy to generate a new pair by running the `init` [command](#built-in-cmds) as below:
+It's rather easy to generate a new pair by running the `init` [command](#commands) as below:
 
 > `<keys_dir>` is a host directory where you store the key pairs.
 > The provider key pair should NEVER be changed as you may inform the world of the public key, unless the secret key is compromised.
@@ -39,7 +39,7 @@ docker run -d -p 5353:12345/udp -p 5353:12345/tcp \
            init
 ```
 
-Now, a server is initialized with [default settings](#env-vars) and running on port `5353` as a daemon.
+Now, a server is initialized with [default settings](#environment_variables) and running on port `5353` as a daemon.
 
 Dig the *public key* fingerprint out of logs:
 
@@ -47,11 +47,11 @@ Dig the *public key* fingerprint out of logs:
 docker logs dnscrypt-server | grep --color 'Provider public key: '
 ```
 
-Then [see if it works](#how-to-test).
+Then [see if it works](#how_to_test).
 
 ### Using an existing key pair
 
-If you used to run a DNScrypt proxy server and have been keeping the keys securely, make sure they are put into `<keys_dir>` and renamed to `public.key` and `secret.key`, then run the `start` [command](#built-in-cmds) instead.
+If you used to run a DNScrypt proxy server and have been keeping the keys securely, make sure they are put into `<keys_dir>` and renamed to `public.key` and `secret.key`, then run the `start` [command](#commands) instead.
 
 > Incidentally, `start` is the default one which could be just omitted.
 
@@ -64,10 +64,10 @@ docker run --rm --read-only \
            pubkey
 ```
 
-### <a name="how-to-test"></a>How to test
+### How to test
 
 Get `<provider_pub_key>` by following the instructions above,
-and check [this section](#env-vars) to determin the default value of `<provider_basename>`.
+and check [this section](#environment_variables) to determin the default value of `<provider_basename>`.
 
 > Please install [`dnscrypt-proxy`](https://hub.docker.com/r/nutshells/dnscrypt-proxy/) and `dig` first.
 
@@ -90,7 +90,7 @@ docker run --rm --read-only nutshells/dnscrypt-wrapper --version
 Print its original options :
 
 > Please be informed that **some** of the listed options are managed by the container intentionally, you will encounter an exception while trying to set any of them, please follow the exception message to get rid of it.
-> If you do want to change the options, use these [environment variables](#env-vars) instead.
+> If you do want to change the options, use these [environment variables](#environment_variables) instead.
 
 ``` bash
 docker run --rm --read-only nutshells/dnscrypt-wrapper --help
@@ -99,7 +99,7 @@ docker run --rm --read-only nutshells/dnscrypt-wrapper --help
 
 ## Reference
 
-### <a name="env-vars"></a>Environment Variables
+### Environment Variables
 
 Since some certain options of `dnscrypt-wrapper` will be handled by [the entrypoint script](https://github.com/quchao/nutshells/blob/master/dnscrypt-wrapper/docker-entrypoint.sh) of the container, you can *ONLY* customize them by setting the environment variables below:
 
@@ -108,7 +108,7 @@ Since some certain options of `dnscrypt-wrapper` will be handled by [the entrypo
 | `RESOLVER_IP` | `8.8.8.8` | `-r`, `--resolver-address` | Upstream dns resolver server IP |
 | `RESOLVER_PORT` | `53` | `-r`, `--resolver-address` | Upstream dns resolver server port |
 | `PROVIDER_BASENAME` | `example.com` | `--provider-name` | Basename of the provider, which forms the whole provide name with a prefix `2.dnscrypt-cert.` |
-| `CRYPT_KEYS_LIFESPAN` | `365` | `--cert-file-expire-days` | For how long (in days) the crypt key & certs would be valid. Refer to [this topic](#key-rotation) to automate the rotation. |
+| `CRYPT_KEYS_LIFESPAN` | `365` | `--cert-file-expire-days` | For how long (in days) the crypt key & certs would be valid. Refer to [this topic](#rotating_the_crypt_key_and_certs) to automate the rotation. |
 
 For instance, if you want to use [OpenDNS](https://www.opendns.com) as the upstream DNS resolver other than [Google's Public DNS](https://developers.google.com/speed/public-dns/), the default one, just [set an environment variable](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e-env-env-file) like this:
 
@@ -116,13 +116,13 @@ For instance, if you want to use [OpenDNS](https://www.opendns.com) as the upstr
 docker run -e RESOLVER_IP=208.67.222.222 -e RESOLVER_PORT=5353 ...
 ```
 
-### <a name="data-vols"></a>Data Volumes
+### Data Volumes
 
 | Container Path | Description | Writable |
 |:-- |:-- |:--:|
 | `/usr/local/etc/dnscrypt-wrapper` | Directory where keys are stored | Y |
 
-### <a name="built-in-cmds"></a>Commands
+### Commands
 
 List available commands:
 
@@ -149,14 +149,14 @@ docker inspect -f '{{json .Mounts }}' dnscrypt-server | grep --color '"Source":'
 
 Then backup it securely.
 
-### <a name="key-rotation"></a>Rotating the crypt key and certs
+### Rotating the crypt key and certs
 
 Unlike the lifelong provider key pair, a **crypt key** & two certs, which are time-limited and used to encrypt and authenticate DNS queries, will be generated only if they're missing or expiring on starting. Thus the container is supposed to be restarted before certs' expiration.
 
 > Two certs are issued right after the crypt key's generation, one of them uses xchacha20 cipher.
 
 Let's say we're planning to rotate them about once a week.
-Firstly, shrink [the cert's lifespan](#env-vars) to `7` days:
+Firstly, shrink [the cert's lifespan](#environment_variables) to `7` days:
 
 > Actually the rotation starts when the validity remaining is under `30%`, which would be on day `5` in this case.
 
@@ -170,7 +170,7 @@ Secondly, restart the container every single day by creating a daily cronjob:
 0 4 * * * docker restart dnscrypt-server
 ```
 
-### <a name="shell-access"></a>Gaining a shell access
+### Gaining a shell access
 
 Get an interactive shell to the container by overwritting the default entrypoint:
 
@@ -195,7 +195,7 @@ docker build -q=false --rm=true --no-cache=true \
 
 #### By committing the changes on a container
 
-Otherwise just pull the image from the official registry, start a container and [get a shell](#shell-access) to it, [commit the changes](https://docs.docker.com/engine/reference/commandline/commit/) afterwards.
+Otherwise just pull the image from the official registry, start a container and [get a shell](#gaining_a_shell_access) to it, [commit the changes](https://docs.docker.com/engine/reference/commandline/commit/) afterwards.
 
 ``` bash
 docker pull nutshells/dnscrypt-wrapper

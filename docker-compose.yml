@@ -1,27 +1,35 @@
-version: "2"
+version: "3.3"
 services:
-    base:
-        image: quchao/base
-        build: ./base
+  base:
+    image: nutshells/base
+    build: ./base
 
-    base-edge:
-        image: quchao/base:edge
-        build:
-            context: ./base
-            dockerfile: Dockerfile-edge
+  base-edge:
+    image: nutshells/base:edge
+    build:
+      context: ./base
+      dockerfile: Dockerfile-edge
 
-    base-centos:
-        image: quchao/base:centos
-        build:
-            context: ./base
-            dockerfile: Dockerfile-centos
+  base-centos:
+    image: nutshells/base:centos
+    build:
+      context: ./base
+      dockerfile: Dockerfile-centos
 
-    ss-obfs:
-        image: quchao/ss-obfs
-        build: ./ss-obfs
+  dnscrypt-wrapper:
+    image: nutshells/dnscrypt-wrapper
+    build: ./dnscrypt-wrapper
 
-    ss-obfs-centos:
-        image: quchao/ss-obfs:centos
-        build:
-            context: ./ss-obfs
-            dockerfile: Dockerfile-centos
+  dnsmasq-fast-lookup:
+    image: nutshells/dnsmasq-fast-lookup
+    build: ./dnsmasq-fast-lookup
+
+  ss-obfs:
+    image: nutshells/ss-obfs
+    build: ./ss-obfs
+
+  ss-obfs-centos:
+    image: nutshells/ss-obfs:centos
+    build:
+      context: ./ss-obfs
+      dockerfile: Dockerfile-centos

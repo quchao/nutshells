@@ -1,30 +1,41 @@
 FROM centos
-LABEL maintainer "Chao QU <mail@quchao.com>"
+LABEL maintainer 'Chao QU <mail@quchao.com>'
 
-WORKDIR /usr/bin/
+ARG GOSU_VERSION='1.10'
 
-ARG GOSU_VERSION="1.10"
-
-# GoSU
 RUN set -ex; \
-    # EPEL
+    # epel
     #yum -y install epel-release; \
-    # Keep up-to-date
+    # keep up-to-date
     yum update -y --exclude=kernel*; \
-    ARCH="amd64"; \
-    GOSU_URL_BASE="https://github.com/tianon/gosu/releases/download/"; \
-	curl -L -o gosu "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}"; \
-	curl -L -o gosu.asc "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}.asc"; \
-    # Verify the signature
-	GPG_HOME="$(mktemp -d)"; \
-    GPG_KEY_SRV="ha.pool.sks-keyservers.net"; \
-    GOSU_GPG_KEY="B42F6819007F00F88E364FD4036A9C25BF357DD4"; \
+    # gosu
+    ARCH='amd64'; \
+    GOSU_URL_BASE='https://github.com/tianon/gosu/releases/download/'; \
+	curl -sSL -o /usr/bin/gosu "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}"; \
+	curl -sSL -o /tmp/gosu.asc "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}.asc"; \
+    # verify the signature
+    GPG_KEY_SRV='keys.gnupg.net'; \
+    GOSU_GPG_KEY='B42F6819007F00F88E364FD4036A9C25BF357DD4'; \
+	export GNUPGHOME="$(mktemp -d)"; \
 	gpg --keyserver "${GPG_KEY_SRV}" --recv-keys "${GOSU_GPG_KEY}"; \
-	gpg --batch --verify gosu.asc gosu; \
-	rm -r "${GPG_HOME}" gosu.asc; \
-    # Test flight
-	chmod +x gosu; \
-	gosu nobody true; \
-	# Cleaning
+	gpg --batch --verify /tmp/gosu.asc /usr/bin/gosu; \
+	rm -r "${GNUPGHOME}" /tmp/gosu.asc; \
+	chmod +x /usr/bin/gosu; \
+	# cleaning
 	yum clean all; \
     rm -rf /tmp/* /var/tmp/*;
+
+COPY docker-entrypoint.sh /usr/local/bin/
+
+ARG RUN_AS_USER
+ENV RUN_AS_USER="${RUN_AS_USER:-nutshell}"
+
+RUN set -ex; \
+    # a low-privilege user
+    groupadd -r "${RUN_AS_USER}"; \
+    useradd -M -d /var/empty -s /sbin/nologin -g "${RUN_AS_USER}" -r "${RUN_AS_USER}"; \
+    # use gosu instead
+    sed -i 's/su-exec/gosu/' /usr/local/bin/docker-entrypoint.sh; \
+    # test flight
+	chmod +x /usr/local/bin/docker-entrypoint.sh; \
+	docker-entrypoint.sh /usr/bin/true;

@@ -11,9 +11,11 @@ services:
   - docker
 
 script:
-  - docker-compose build
+  - docker-compose build --no-cache
 
 after_success:
  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
  - docker push "${DOCKER_USERNAME}/base"
+ - docker push "${DOCKER_USERNAME}/dnscrypt-wrapper"
+ - docker push "${DOCKER_USERNAME}/dnsmasq-fast-lookup"
  - docker push "${DOCKER_USERNAME}/ss-obfs"

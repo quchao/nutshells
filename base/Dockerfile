@@ -1,19 +1,32 @@
 FROM alpine
-LABEL maintainer "Chao QU <mail@quchao.com>"
+LABEL maintainer 'Chao QU <mail@quchao.com>'
 
-# Keep up-to-date
 RUN set -ex; \
-    # Change repo mirror
-    sed -i 's/http:\/\/dl-cdn.alpinelinux.org/https:\/\/mirrors.aliyun.com/g' /etc/apk/repositories; \
+    # change mirrors
+    sed -i 's|http://dl-cdn.alpinelinux.org|https://mirrors.aliyun.com|g' /etc/apk/repositories; \
+    # keep update-to-date
     apk update; \
     apk upgrade; \
-    # Runtime deps
+    # runtime deps
     apk add --no-cache --virtual .common-deps \
         ca-certificates \
         su-exec \
         curl \
     ; \
-    # Update CAs
+    # reset CA list
     update-ca-certificates --fresh; \
-    # Cleaning
-    rm -rf /tmp/* /var/tmp/*;
+    # cleaning
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/*;
+
+COPY docker-entrypoint.sh /usr/local/bin/
+
+ARG RUN_AS_USER
+ENV RUN_AS_USER="${RUN_AS_USER:-nutshell}"
+
+RUN set -ex; \
+    # a low-privilege user
+    addgroup -S "${RUN_AS_USER}"; \
+    adduser -S -D -H  -h /var/empty -s /sbin/nologin -G "${RUN_AS_USER}" "${RUN_AS_USER}"; \
+    # test flight
+	chmod +x /usr/local/bin/docker-entrypoint.sh; \
+	docker-entrypoint.sh /bin/true;

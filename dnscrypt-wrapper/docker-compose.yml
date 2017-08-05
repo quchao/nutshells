@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  dnscrypt-server:
+    container_name: dnscrypt-server
+    image: nutshells/dnscrypt-wrapper
+    #command: ["init"]
+    ports:
+      - "127.0.0.1:5353:12345/tcp"
+      - "127.0.0.1:5353:12345/udp"
+    environment:
+      #- RESOLVER_IP="208.67.222.222"
+      #- RESOLVER_PORT="5353"
+      #- PROVIDER_BASENAME="your_domain.com"
+    volumes:
+      - type: bind
+        source: <keys_dir>
+        target: /usr/local/etc/dnscrypt-wrapper
+    read_only: true
+    restart: unless-stopped
+

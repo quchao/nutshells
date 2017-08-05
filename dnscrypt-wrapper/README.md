@@ -39,7 +39,7 @@ docker run -d -p 5353:12345/udp -p 5353:12345/tcp \
            init
 ```
 
-Now, a server is initialized with [default settings](#environment_variables) and running on port `5353` as a daemon.
+Now, a server is initialized with [default settings](#environment-variables) and running on port `5353` as a daemon.
 
 Dig the *public key* fingerprint out of logs:
 
@@ -47,7 +47,7 @@ Dig the *public key* fingerprint out of logs:
 docker logs dnscrypt-server | grep --color 'Provider public key: '
 ```
 
-Then [see if it works](#how_to_test).
+Then [see if it works](#how-to-test).
 
 ### Using an existing key pair
 
@@ -67,7 +67,7 @@ docker run --rm --read-only \
 ### How to test
 
 Get `<provider_pub_key>` by following the instructions above,
-and check [this section](#environment_variables) to determin the default value of `<provider_basename>`.
+and check [this section](#environment-variables) to determin the default value of `<provider_basename>`.
 
 > Please install [`dnscrypt-proxy`](https://hub.docker.com/r/nutshells/dnscrypt-proxy/) and `dig` first.
 
@@ -90,7 +90,7 @@ docker run --rm --read-only nutshells/dnscrypt-wrapper --version
 Print its original options :
 
 > Please be informed that **some** of the listed options are managed by the container intentionally, you will encounter an exception while trying to set any of them, please follow the exception message to get rid of it.
-> If you do want to change the options, use these [environment variables](#environment_variables) instead.
+> If you do want to change the options, use these [environment variables](#environment-variables) instead.
 
 ``` bash
 docker run --rm --read-only nutshells/dnscrypt-wrapper --help
@@ -108,7 +108,7 @@ Since some certain options of `dnscrypt-wrapper` will be handled by [the entrypo
 | `RESOLVER_IP` | `8.8.8.8` | `-r`, `--resolver-address` | Upstream dns resolver server IP |
 | `RESOLVER_PORT` | `53` | `-r`, `--resolver-address` | Upstream dns resolver server port |
 | `PROVIDER_BASENAME` | `example.com` | `--provider-name` | Basename of the provider, which forms the whole provide name with a prefix `2.dnscrypt-cert.` |
-| `CRYPT_KEYS_LIFESPAN` | `365` | `--cert-file-expire-days` | For how long (in days) the crypt key & certs would be valid. Refer to [this topic](#rotating_the_crypt_key_and_certs) to automate the rotation. |
+| `CRYPT_KEYS_LIFESPAN` | `365` | `--cert-file-expire-days` | For how long (in days) the crypt key & certs would be valid. Refer to [this topic](#rotating-the-crypt-key-and-certs) to automate the rotation. |
 
 For instance, if you want to use [OpenDNS](https://www.opendns.com) as the upstream DNS resolver other than [Google's Public DNS](https://developers.google.com/speed/public-dns/), the default one, just [set an environment variable](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e-env-env-file) like this:
 
@@ -156,7 +156,7 @@ Unlike the lifelong provider key pair, a **crypt key** & two certs, which are ti
 > Two certs are issued right after the crypt key's generation, one of them uses xchacha20 cipher.
 
 Let's say we're planning to rotate them about once a week.
-Firstly, shrink [the cert's lifespan](#environment_variables) to `7` days:
+Firstly, shrink [the cert's lifespan](#environment-variables) to `7` days:
 
 > Actually the rotation starts when the validity remaining is under `30%`, which would be on day `5` in this case.
 
@@ -195,7 +195,7 @@ docker build -q=false --rm=true --no-cache=true \
 
 #### By committing the changes on a container
 
-Otherwise just pull the image from the official registry, start a container and [get a shell](#gaining_a_shell_access) to it, [commit the changes](https://docs.docker.com/engine/reference/commandline/commit/) afterwards.
+Otherwise just pull the image from the official registry, start a container and [get a shell](#gaining-a-shell-access) to it, [commit the changes](https://docs.docker.com/engine/reference/commandline/commit/) afterwards.
 
 ``` bash
 docker pull nutshells/dnscrypt-wrapper

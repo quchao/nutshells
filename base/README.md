@@ -1,15 +1,15 @@
 # Base Image of Project Nutshells 🌰
 
-[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Repo](https://img.shields.io/badge/Docker-Repo-22B8EB.svg)](https://hub.docker.com/r/nutshells/base/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](http://alpinelinux.org/) [![CentOS Based](https://img.shields.io/badge/CentOS-7.3-932279.svg)](https://www.centos.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE)
+[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg?maxAge=2592000)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/base.svg?maxAge=3600&label=Build Status)](https://hub.docker.com/r/nutshells/base/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg?maxAge=2592000)](https://alpinelinux.org/) [![CentOS Based](https://img.shields.io/badge/CentOS-7.3-932279.svg?maxAge=2592000)](https://www.centos.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?maxAge=2592000&label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE/)
 
 
 ## Variants:
 
 | Tag | Description | 🐳 |
 |:-- |:-- |:--:|
-| `:latest` | Based on `alpine:latest`, includes a handy tool named [su-exec](https://github.com/ncopa/su-exec/) to exec cmds with different privileges in containers. | [Dockerfile](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile) |
-| `:edge` | Based on `alpine:edge`. | [Dockerfile-edge](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-edge) |
-| `:centos` | Based on `centos:latest` with [EPEL](https://fedoraproject.org/wiki/EPEL) & [gosu](https://github.com/tianon/gosu/) pre-installed. | [Dockerfile-centos](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-centos) |
+| `:latest` | Based on `alpine:latest`, includes a handy tool named [su-exec](https://github.com/ncopa/su-exec/) to exec cmds with different privileges in containers. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile/) |
+| `:edge` | Based on `alpine:edge`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-edge-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-edge/) |
+| `:centos` | Based on `centos:latest` with [EPEL](https://fedoraproject.org/wiki/EPEL) & [gosu](https://github.com/tianon/gosu/) pre-installed. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-centos-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-centos/) |
 
 
 ## Usage
@@ -44,6 +44,8 @@ docker commit --change "Commit msg" base nutshells/base
 
 ## Contributing
 
+[![Github Starts](https://img.shields.io/github/stars/quchao/nutshells.svg?style=social&label=Star&maxAge=3600)](https://github.com/quchao/nutshells/) [![Twitter Followers](https://img.shields.io/twitter/follow/chappell.svg?style=social&label=Follow&maxAge=3600)](https://twitter.com/chappell/)
+
 > Follow GitHub's [*How-to*](https://opensource.guide/how-to-contribute/) guide for the basis.
 
 Contributions are always welcome in many ways:
@@ -62,9 +64,9 @@ Other relevant softwares:
 
 | Ware/Lib | License |
 |:-- |:--:|
-| [Docker](https://www.docker.com/) | [Apache 2.0](https://github.com/moby/moby/blob/master/LICENSE) |
-| [Official Alpine Docker image](https://github.com/gliderlabs/docker-alpine) | [BSD 2-clause "Simplified"](https://github.com/gliderlabs/docker-alpine/blob/master/LICENSE) |
-| [Official CentOS Docker image](https://github.com/CentOS/sig-cloud-instance-images) | GNU GPL v2.0 |
-| [su-exec](https://github.com/ncopa/su-exec/) | [MIT](https://github.com/ncopa/su-exec/blob/master/LICENSE) |
-| [EPEL](https://fedoraproject.org/wiki/EPEL) | [Various](https://fedoraproject.org/wiki/Licensing:Main?rd=Licensing) |
-| [gosu](https://github.com/tianon/gosu/) | [GNU GPL v3.0](https://github.com/tianon/gosu/blob/master/LICENSE) |
+| [Docker](https://www.docker.com/) | [![License](https://img.shields.io/github/license/moby/moby.svg?maxAge=2592000&label=License)](https://github.com/moby/moby/blob/master/LICENSE/) |
+| [Official Alpine Docker image](https://github.com/gliderlabs/docker-alpine) | [![License](https://img.shields.io/github/license/gliderlabs/docker-alpine.svg?maxAge=2592000&label=License)](https://github.com/gliderlabs/docker-alpine/blob/master/LICENSE/) |
+| [Official CentOS Docker image](https://github.com/CentOS/sig-cloud-instance-images) | ![License](https://img.shields.io/badge/License-GNU_General_Public_License_v2.0-blue.svg?maxAge=2592000) |
+| [su-exec](https://github.com/ncopa/su-exec/) | [![License](https://img.shields.io/github/license/ncopa/su-exec.svg?maxAge=2592000&label=License)](https://github.com/ncopa/su-exec/blob/master/LICENSE) |
+| [EPEL](https://fedoraproject.org/wiki/EPEL) | [![License](https://img.shields.io/badge/License-Various-blue.svg?maxAge=2592000)](https://fedoraproject.org/wiki/Licensing:Main?rd=Licensing) |
+| [gosu](https://github.com/tianon/gosu/) | [![License](https://img.shields.io/github/license/tianon/gosu.svg?maxAge=2592000&label=License)](https://github.com/tianon/gosu/blob/master/LICENSE/) |

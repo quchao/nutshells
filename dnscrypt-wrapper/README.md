@@ -1,6 +1,6 @@
 # DNSCrypt-Wrapper Docker Image
 
-[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Repo](https://img.shields.io/badge/Docker-Repo-22B8EB.svg)](https://hub.docker.com/r/nutshells/dnscrypt-wrapper/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](http://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![dnscrypt-wrapper](https://img.shields.io/badge/DNSCrypt--Wrapper-0.3-lightgrey.svg)](https://github.com/cofyc/dnscrypt-wrapper/)
+[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/dnscrypt-wrapper.svg?maxAge=3600&label=Build Status)](https://hub.docker.com/r/nutshells/dnscrypt-wrapper/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](https://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![dnscrypt-wrapper](https://img.shields.io/badge/DNSCrypt--Wrapper-0.3-lightgrey.svg)](https://github.com/cofyc/dnscrypt-wrapper/)
 
 [DNSCrypt-Wrapper](https://github.com/cofyc/dnscrypt-wrapper/) is the server-end of [DNSCrypt](http://dnscrypt.org/) proxy, which is a protocol to improve DNS security, now with xchacha20 cipher support.
 
@@ -9,7 +9,7 @@
 
 | Tag | Description | 🐳 |
 |:-- |:-- |:--:|
-| `:latest` | DNSCrypt-Wrapper `0.3` on `alpine:latest`, features certficate management & rotation. | [Dockerfile](https://github.com/QuChao/nutshells/blob/master/dnscrypt-wrapper/Dockerfile) |
+| `:latest` | DNSCrypt-Wrapper `0.3` on `alpine:latest`, features certficate management & rotation. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/dnscrypt-wrapper/Dockerfile/) |
 
 
 ## Usage
@@ -227,6 +227,8 @@ If you think this is annoying, just add [the `--no-healthcheck` option](https://
 
 ## Contributing
 
+[![Github Starts](https://img.shields.io/github/stars/quchao/nutshells.svg?style=social&label=Star&maxAge=3600)](https://github.com/quchao/nutshells/) [![Twitter Followers](https://img.shields.io/twitter/follow/chappell.svg?style=social&label=Follow&maxAge=3600)](https://twitter.com/chappell/)
+
 > Follow GitHub's [*How-to*](https://opensource.guide/how-to-contribute/) guide for the basis.
 
 Contributions are always welcome in many ways:
@@ -254,7 +256,7 @@ Other relevant softwares:
 
 | Ware/Lib | License |
 |:-- |:--:|
-| [Docker](https://www.docker.com/) | [Apache 2.0](https://github.com/moby/moby/blob/master/LICENSE) |
-| [DNSCrypt-Proxy](https://github.com/jedisct1/dnscrypt-proxy) | [ISC](https://github.com/jedisct1/dnscrypt-proxy/blob/master/COPYING) |
-| [DNSCrypt-Wrapper](https://github.com/cofyc/dnscrypt-wrapper/) | [ISC](https://github.com/cofyc/dnscrypt-wrapper/blob/master/COPYING) |
-| [DNSCrypt-Server-Docker](https://github.com/jedisct1/dnscrypt-server-docker/) | [ISC](https://github.com/jedisct1/dnscrypt-server-docker/blob/master/LICENSE) |
+| [Docker](https://www.docker.com/) | [![License](https://img.shields.io/github/license/moby/moby.svg?maxAge=2592000&label=License)](https://github.com/moby/moby/blob/master/LICENSE/) |
+| [DNSCrypt-Proxy](https://github.com/jedisct1/dnscrypt-proxy) | [![License](https://img.shields.io/badge/License-ISC_License-blue.svg?maxAge=2592000)](https://github.com/jedisct1/dnscrypt-proxy/blob/master/COPYING) |
+| [DNSCrypt-Wrapper](https://github.com/cofyc/dnscrypt-wrapper/) | [![License](https://img.shields.io/badge/License-ISC_License-blue.svg?maxAge=2592000)](https://github.com/cofyc/dnscrypt-wrapper/blob/master/COPYING/) |
+| [DNSCrypt-Server-Docker](https://github.com/jedisct1/dnscrypt-server-docker/) | [![License](https://img.shields.io/github/license/jedisct1/dnscrypt-server-docker.svg?maxAge=2592000&label=License)](https://github.com/jedisct1/dnscrypt-server-docker/blob/master/LICENSE/) |

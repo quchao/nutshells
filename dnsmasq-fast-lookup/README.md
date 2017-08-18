@@ -1,8 +1,8 @@
 # DNSMasq Docker Image
 
-[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/dnsmasq-fast-lookup.svg?maxAge=3600&label=Build Status)](https://hub.docker.com/r/nutshells/dnsmasq-fast-lookup/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](https://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![DNSMasq-fast-lookup](https://img.shields.io/badge/DNSMasq-fast--lookup-lightgrey.svg)](https://github.com/infinet/dnsmasq/)
+[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/dnsmasq-fast-lookup.svg?maxAge=3600&label=Build%20Status)](https://hub.docker.com/r/nutshells/dnsmasq-fast-lookup/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](https://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![DNSMasq-fast-lookup](https://img.shields.io/badge/DNSMasq-fast--lookup-lightgrey.svg)](https://github.com/infinet/dnsmasq/)
 
-[DNSMasq-fast-lookup](https://github.com/infinet/dnsmasq/) is a fork of the well-known lightweight DNS forwarder [DNSMasq](http://www.thekelleys.org.uk/dnsmasq/doc.html), it aims to improve --ipset/--server/--address lookup performance.
+[DNSMasq-fast-lookup](https://github.com/infinet/dnsmasq/) is a fork of the well-known lightweight DNS forwarder [DNSMasq](http://www.thekelleys.org.uk/dnsmasq/doc.html), it aims to improve lookup performance of `--ipset`, `--server` & `--address`.
 
 
 ## Variants:

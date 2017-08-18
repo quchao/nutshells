@@ -9,8 +9,8 @@ Project [**Nutshells**](https://github.com/quchao/nutshells/) contains a bunch o
 - [**Base**](https://github.com/quchao/nutshells/blob/master/base/): The base image.
     - `:latest` & `:edge`: Based on `alpine:latest` and `alpine:edge`, includes a handy tool named [su-exec](https://github.com/ncopa/su-exec/) to exec commands with different privileges in containers.
     - `:centos`: Based on `centos:latest` with [EPEL](https://fedoraproject.org/wiki/EPEL) & [gosu](https://github.com/tianon/gosu/) pre-installed.
-- [**DNSCrypt-Wrapper**](https://github.com/quchao/nutshells/blob/master/dnscrypt-wrapper/): The server-end of DNSCrypt proxy, which is a protocol to improve DNS security, now with xchacha20 cipher support.
-- [**DNSMasq-fast-lookup**](https://github.com/quchao/nutshells/blob/master/dnsmasq-fast-lookup/): A fork of the well-known lightweight DNS forwarder and DHCP server, featuring fast ipset/server/address lookups.
+- [**DNSCrypt-Wrapper**](https://github.com/quchao/nutshells/blob/master/dnscrypt-wrapper/): The server-end of DNSCrypt proxy, which is a protocol to improve DNS security, now with xchacha20 cipher support. The image includes certficate management & rotation.
+- [**DNSMasq-fast-lookup**](https://github.com/quchao/nutshells/blob/master/dnsmasq-fast-lookup/): A fork of the well-known lightweight DNS forwarder DNSMasq, it aims to improve lookup performance of `--ipset`, `--server` & `--address`.
 - [**SS-Obfs**](https://github.com/quchao/nutshells/blob/master/ss-obfs/) - [ss-libev](https://github.com/shadowsocks/shadowsocks-libev/) & [simple-obfs](https://github.com/shadowsocks/simple-obfs/). A `:centos` variant is available.
 
 ## Usages

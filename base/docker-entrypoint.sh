@@ -5,19 +5,37 @@ set -eo pipefail
 readonly ARGS="$@"
 
 # funcs
-throw_error() {
-    echo -e "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: \n${1:-Unknown Error}" >&2
+throw_exception() {
+    local _LEVEL="${1:-INFO}"
+    shift
+    echo -e "\n[${_LEVEL}]\n$(date +'%Y-%m-%dT%H:%M:%S%z')\n$*" >&2
+}
+
+info() {
+    throw_exception 'INFO' "$*"
+}
+
+warning() {
+    throw_exception 'WARNING' "$*"
+}
+
+error() {
+    throw_exception 'ERROR' "$*"
+}
+
+fatal() {
+    throw_exception 'FATAL' "$*"
     exit 1
 }
 
 parse_cmd() {
     # debug
-    #echo $FUNCNAME $@
+    #info "${FUNCNAME}" "$*"
 
-    local _CMD=$1
+    local _CMD="$1"
 
     [[ -n ${_CMD} && -x ${_CMD} ]] \
-        || throw_error "Please specify a program to run."
+        || fatal 'Please specify a program to run.'
 
     shift
     local _ARGS="$@"
@@ -29,6 +47,10 @@ parse_cmd() {
         ${_ARGS}
 }
 
+cleanup() {
+    info 'Entrypoint Script ended.'
+}
+
 main() {
     # env check
     [[ -n ${RUN_AS_USER} ]] \
@@ -36,4 +58,6 @@ main() {
 
     parse_cmd ${ARGS}
 }
+
+trap cleanup EXIT
 main

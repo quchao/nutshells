@@ -12,23 +12,45 @@ readonly PUB_KEY="${KEYS_DIR}/${PUB_KEY_FILENAME}"
 readonly PRI_KEY="${KEYS_DIR}/${PRI_KEY_FILENAME}"
 
 # funcs
-throw_error() {
-    echo -e "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: \n${1:-Unknown Error}" >&2
+throw_exception() {
+    local _LEVEL="${1:-INFO}"
+    shift
+    echo -e "\n[${_LEVEL}]\n$(date +'%Y-%m-%dT%H:%M:%S%z')\n$*" >&2
+}
+
+info() {
+    throw_exception 'INFO' "$*"
+}
+
+warning() {
+    throw_exception 'WARNING' "$*"
+}
+
+error() {
+    throw_exception 'ERROR' "$*"
+}
+
+fatal() {
+    throw_exception 'FATAL' "$*"
     exit 1
 }
 
 get_flag(){
-    [[ $(expr length "${1:-unknown}") -eq 1 ]] \
-        && echo "-$1" \
-        || echo "--$1"
+    local _FLG_NAME="${1:-unknown}"
+    if [[ "${#_FLG_NAME}" -eq 1 ]] ; then
+        echo "-${_FLG_NAME}"
+    else
+        echo "--${_FLG_NAME}"
+    fi
 }
 
 halt(){
-    local _FLG="$(get_flag $2)"
+    local _FLG
+    _FLG="$(get_flag "$2")"
     local _ERR_MSG="Option '${_FLG}' is managed by the entrypoint script.\n"
-    local _ERR_NUM=${1:-0}
+    local _ERR_NUM="${1:-0}"
 
-    case ${_ERR_NUM} in
+    case "${_ERR_NUM}" in
         1)
             # no forking
             _ERR_MSG="${_ERR_MSG}Don't try to fork it into background in a container.\n"
@@ -43,10 +65,10 @@ halt(){
 
     _ERR_MSG="${_ERR_MSG}Just simply remove it and "
 
-    case ${_ERR_NUM} in
+    case "${_ERR_NUM}" in
         3)
             # run sub-cmd
-            local _SUB_CMD=${3:-start}
+            local _SUB_CMD="${3:-start}"
             _ERR_MSG="${_ERR_MSG}run the '${_SUB_CMD}' command instead."
             ;;
         *)
@@ -55,7 +77,7 @@ halt(){
             ;;
     esac
 
-    throw_error "${_ERR_MSG}"
+    fatal "${_ERR_MSG}"
 }
 
 run_cmd() {
@@ -83,7 +105,7 @@ check_opts() {
     while getopts ':hvdp:u:a:r:-:o:x' _OPTARG; do
         case "${_OPTARG}" in
             h | v)
-                run_cmd 'true' "${_ARGS}"
+                run_cmd 'true' ${_ARGS}
                 break
                 ;;
             d | p)
@@ -97,7 +119,7 @@ check_opts() {
             - )  _LONG_OPTARG="${OPTARG#*=}"
                 case "${OPTARG}" in
                     help | version)
-                        run_cmd 'true' "${_ARGS}"
+                        run_cmd 'true' ${_ARGS}
                         break
                         ;;
                     daemonize | pidfile=?)
@@ -139,6 +161,7 @@ check_opts() {
 
 is_initialized() {
     if [[ ! -f "${PUB_KEY}" || ! -f "${PRI_KEY}" ]]; then
+        warning 'The provider key pair does NOT exist.'
         return 1
     else
         return 0
@@ -147,8 +170,8 @@ is_initialized() {
 
 ensure_initialized() {
     is_initialized \
-        || throw_error "$(cat <<- EOF
-		Not initialized yet: the provider key pair does NOT exist.
+        || fatal "$(cat <<- EOF
+		Not initialized yet.
 		Run the 'init' command to generate a new provider key pair,
 		or use existing ones by mounting them into the container at ${KEYS_DIR}.
 		Referer to README for more details please.
@@ -157,11 +180,13 @@ ensure_initialized() {
 }
 
 need_rotation() {
+    local _LIFESPAN="$((CRYPT_KEYS_LIFESPAN * 1440 * 7 / 10))"
     if [[ \
-        $(/usr/bin/find "${CRYPT_KEYS_DIR}" -name '*.key' -type f \
-            -mmin -$(expr "${CRYPT_KEYS_LIFESPAN}" \* 1440 \* 7 / 10) \
-            -print | wc -l | sed 's|[^0-9]||g') -eq 0 \
+        "$(/usr/bin/find "${CRYPT_KEYS_DIR}" -maxdepth 1 -type f \
+            -name '*.key' -mmin -"${_LIFESPAN}" \
+            -print | wc -l | sed 's|[^0-9]||g')" -eq 0 \
          ]]; then
+        warning "Rotation is needed for no crypt key is valid until ${_LIFESPAN} minutes later."
         return 0
     else
         return 1
@@ -170,13 +195,14 @@ need_rotation() {
 
 prune_keys() {
     # prune the expired keys/certs
-    /usr/bin/find "${CRYPT_KEYS_DIR}" -type f \
-        -mmin +$(expr "${CRYPT_KEYS_LIFESPAN}" \* 1440) \
+    /usr/bin/find "${CRYPT_KEYS_DIR}" -maxdepth 1 -type f \
+        -mmin +"$((CRYPT_KEYS_LIFESPAN * 1440))" \
         -exec rm -f {} \;
 }
 
 rotate_keys() {
-    local _TS="$(date '+%s')"
+    local _TS
+    _TS="$(date '+%s')"
     local _CRYPT_KEY="${CRYPT_KEYS_DIR}/${_TS}.key"
     local _CRYPT_XSALSA20_CERT="${CRYPT_KEYS_DIR}/${_TS}-xsalsa20.cert"
     local _CRYPT_XCHACHA20_CERT="${CRYPT_KEYS_DIR}/${_TS}-xchacha20.cert"
@@ -202,17 +228,19 @@ rotate_keys() {
     chmod 644 "${_CRYPT_XSALSA20_CERT}" "${_CRYPT_XCHACHA20_CERT}"
     chmod 640 "${_CRYPT_KEY}"
     chgrp "${RUN_AS_USER}" "${_CRYPT_KEY}" "${_CRYPT_XSALSA20_CERT}" "${_CRYPT_XCHACHA20_CERT}"
+
+    info 'Crypt key has been rotated.'
 }
 
 
 list_crypt_key_pair() {
     # list 2 most recent modified crypt keys/certs
-    local _EXT=${1:-key}
-    local _NUM=${2:-2}
+    local _EXT="${1:-key}"
+    local _NUM="${2:-2}"
 
-    local _FILE_LIST=
     local _FILE=
-    for _FILE in $(ls -1cF "${CRYPT_KEYS_DIR}"/*."${_EXT}" | head -"${_NUM}"); do
+    local _FILE_LIST=
+    for _FILE in $(/usr/bin/find "${CRYPT_KEYS_DIR}" -maxdepth 1 -type f -name "*.${_EXT}" -print | sort -nr | head -"${_NUM}"); do
         _FILE_LIST="${_FILE_LIST}${_FILE},"
     done
 
@@ -238,6 +266,18 @@ cmd_start() {
     need_rotation \
         && rotate_keys
 
+    # get ip of the linked container
+    if echo "${RESOLVER_IP}" | grep -Eqv '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'; then
+        local _RESOLVER_IP
+        set +e
+        _RESOLVER_IP="$(getent hosts "${RESOLVER_IP}" | awk '{ print $1 }')"
+        set -e
+        if [[ -n "${_RESOLVER_IP}" ]]; then
+            info "'${RESOLVER_IP}' is resolved to ${_RESOLVER_IP}."
+            RESOLVER_IP="${_RESOLVER_IP}"
+        fi
+    fi
+
     run_cmd 'true' \
             -a "0.0.0.0:${LISTEN_PORT}" \
             -r "${RESOLVER_IP}:${RESOLVER_PORT}" \
@@ -252,21 +292,24 @@ cmd_init() {
 
     # initialized already
     if is_initialized ; then
+        info 'The container has been initialized, starting now...'
         cmd_start ${_ARGS}
         exit $?
     fi
 
     # generate provider key pair
     run_cmd 'false' --gen-provider-keypair \
-         && mv ${PUB_KEY_FILENAME} ${PRI_KEY_FILENAME} ${KEYS_DIR}
+         && mv "${PUB_KEY_FILENAME}" "${PRI_KEY_FILENAME}" "${KEYS_DIR}"
     #chmod 644 "${PUB_KEY}"
     #chmod 640 "${PRI_KEY}"
 
     # recheck
-    is_initialized \
-        && cmd_start ${_ARGS}\
-        || throw_error 'Failed to initialize the container, file an
+    if is_initialized ; then
+        cmd_start ${_ARGS}
+    else
+        fatal 'Failed to initialize the container, file an
         issue on GitHub please.'
+    fi
 }
 
 cmd_pubkey() {
@@ -284,7 +327,7 @@ cmd_dns() {
 
     # ensure the crypt key correctly generated
     [[ -e "${CRYPT_KEYS_DIR}" ]] \
-        || throw_error "Crypt key not found, run the 'start' command to
+        || fatal "Crypt key not found, run the 'start' command to
         generate one please."
 
     run_cmd 'true' \
@@ -295,17 +338,17 @@ cmd_dns() {
 cmd_help() {
 	cat <<- "EOF"
 	Commands:
-	    init            Perform an initialization, which technically generates a new provider key pair before starting the server.
-	    start (Default) Start a server. It will generate the crypt key & certs, and rotate them every time it starts if necessary.
-	    pubkey          Show public key's fingerprint.
-	    dns             Show DNS record.
-	    help            Show this help message.
+	    init                Perform an initialization, which technically generates a new provider key pair before starting the server.
+	    start (Default)     Start a server. It will generate the crypt key & certs, and rotate them every time it starts if necessary.
+	    pubkey              Show public key's fingerprint.
+	    dns                 Show DNS record.
+	    help                Show this help message.
 	EOF
 }
 
 parse_cmd() {
     # debug
-    #echo $FUNCNAME $@
+    #info "${FUNCNAME}" "$*"
 
     local _SUB_CMD="$1"
     local _ARGS="$@"
@@ -336,11 +379,19 @@ parse_cmd() {
     esac
 }
 
+cleanup() {
+    info 'Entrypoint Script ended.'
+}
+
 main() {
+    #info "${FUNCNAME}" "${ARGS}"
+
     # env check
-    [[ -n ${LISTEN_PORT} && -n ${RUN_AS_USER} && -x ${ENTRYPOINT_CMD} ]] \
-        || throw_error "This script is only compatible with the nutshells/dnscrypt-wrapper image,\ndon't try to run it out straight."
+    [[ -n "${LISTEN_PORT}" && -n "${RUN_AS_USER}" && -x "${ENTRYPOINT_CMD}" ]] \
+        || fatal "This script is only compatible with the nutshells/dnscrypt-wrapper image,\ndo NOT try to run it out straight."
 
     parse_cmd ${ARGS}
 }
+
+trap cleanup EXIT
 main

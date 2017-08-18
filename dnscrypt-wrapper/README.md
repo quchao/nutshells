@@ -3,13 +3,14 @@
 [![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/dnscrypt-wrapper.svg?maxAge=3600&label=Build Status)](https://hub.docker.com/r/nutshells/dnscrypt-wrapper/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](https://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![dnscrypt-wrapper](https://img.shields.io/badge/DNSCrypt--Wrapper-0.3-lightgrey.svg)](https://github.com/cofyc/dnscrypt-wrapper/)
 
 [DNSCrypt-Wrapper](https://github.com/cofyc/dnscrypt-wrapper/) is the server-end of [DNSCrypt](http://dnscrypt.org/) proxy, which is a protocol to improve DNS security, now with xchacha20 cipher support.
+This image includes certficate management & rotation.
 
 
 ## Variants:
 
 | Tag | Description | 🐳 |
 |:-- |:-- |:--:|
-| `:latest` | DNSCrypt-Wrapper `0.3` on `alpine:latest`, features certficate management & rotation. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/dnscrypt-wrapper/Dockerfile/) |
+| `:latest` | DNSCrypt-Wrapper `0.3` on `alpine:latest`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/dnscrypt-wrapper/Dockerfile/) |
 
 
 ## Usage
@@ -27,9 +28,8 @@ docker run [OPTIONS] nutshells/dnscrypt-wrapper [COMMAND] [ARG...]
 A DNScrypt proxy server cannot go without a so-called **provider key pair**.
 It's rather easy to generate a new pair by running the `init` [command](#commands) as below:
 
-> `<keys_dir>` is a host directory where you store the key pairs.
+> `<keys_dir>` is the host directory where you store the key pairs.
 > The provider key pair should NEVER be changed as you may inform the world of the public key, unless the secret key is compromised.
-> The `--net=host` option provides the best network performance. Use it if you know it exactly.
 
 ``` bash
 docker run -d -p 5353:12345/udp -p 5353:12345/tcp \
@@ -76,6 +76,7 @@ dnscrypt-proxy --local-address=127.0.0.1:53 \
                --resolver-address=127.0.0.1:5353 \
                --provider-name=2.dnscrypt-cert.<provider_basename> \
                --provider-key=<provider_pub_key>
+               --loglevel=7
 dig -p 53 +tcp google.com @127.0.0.1
 ```
 
@@ -94,6 +95,12 @@ Print its original options :
 
 ``` bash
 docker run --rm --read-only nutshells/dnscrypt-wrapper --help
+```
+
+Show verbose outputs (by adding the `-V` option):
+
+``` bash
+docker run [OPTIONS] nutshells/dnscrypt-wrapper [COMMAND] [ARG...] -V
 ```
 
 
@@ -118,7 +125,7 @@ docker run -e RESOLVER_IP=208.67.222.222 -e RESOLVER_PORT=5353 ...
 
 ### Data Volumes
 
-| Container Path | Description | Writable |
+| Path in Container | Description | Mount as Writeable |
 |:-- |:-- |:--:|
 | `/usr/local/etc/dnscrypt-wrapper` | Directory where keys are stored | Y |
 
@@ -133,9 +140,54 @@ docker run --rm --read-only nutshells/dnscrypt-wrapper help
 
 ## Advanced Topics
 
-### Using Docker Compose
+### Using Docker-compose
 
 See [the sample file](https://github.com/quchao/nutshells/blob/master/dnscrypt-wrapper/docker-compose.yml).
+
+### Better Performance
+
+It's a good idea to speed up the high-frequency queries by adding a caching upstream resolver, we choose [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) for its lightweight and configurability. Though there're many other options, such as [unbound](https://www.unbound.net/).
+
+Firstly, let's create a new bridge network named `dnscrypt`:
+
+> Add `--driver overlay` if it's in swarm mode.
+
+``` bash
+docker network create dnscrypt
+```
+
+Secondly, create a *dnsmasq* container into the network with the cache size increased:
+
+> Refer to [this page](https://hub.docker.com/r/nutshells/dnsmasq-fast-lookup/) for more about the `nutshells/dnsmasq-fast-lookup` image.
+
+``` bash
+docker run -d --network=dnscrypt \
+           --name=dnsmasq --restart=unless-stopped --read-only \
+           nutshells/dnsmasq-fast-lookup \
+           --domain-needed --bogus-priv \
+           --server=8.8.8.8 --no-resolv --no-hosts \
+           --cache-size=10240
+```
+
+Then start a *dnscrypt server* into the same network too:
+
+> To add an existing container into the network, use [`docker network connect`](https://docs.docker.com/engine/userguide/networking/#user-defined-networks) please.
+
+``` bash
+docker run -d --network=dnscrypt \
+           -p 5353:12345/udp -p 5353:12345/tcp \
+           --name=dnscrypt-server --restart=unless-stopped --read-only \
+           --mount=type=bind,src=<keys_dir>,dst=/usr/local/etc/dnscrypt-wrapper \
+           -e RESOLVER_IP="upstream" -e RESOLVER_PORT="12345" \
+           nutshells/dnscrypt-wrapper \
+           init
+```
+
+Done!
+
+A [compose file](#using-docker-compose), which helps you to manage both of the containers concurrently, is highly recommended for this situation.
+
+Alternatively, the `--net=host` option provides the best network performance, use it if you know it exactly.
 
 ### Backing-up the secret key
 
@@ -208,7 +260,7 @@ docker commit --change "Commit msg" dnscrypt-server nutshells/dnscrypt-wrapper
 
 ## Declaring the Health Status
 
-Status of this container-specified health check merely indicates whether the crypt certs are *about to expire*, you'd better **restart** the container to [rotate the keys](key-rotation) ASAP if it's shown as *unhealthy*.
+Status of this container-specified health check merely indicates whether the crypt certs are *about to expire*, you'd better **restart** the container to [rotate the keys](#rotating-the-crypt-key-and-certs) ASAP if it's shown as *unhealthy*.
 
 To confirm the status, run this command:
 
@@ -242,7 +294,7 @@ Contributions are always welcome in many ways:
 ## Todo
 
 - [x] Serve with the old key & certs for another hour after the rotation.
-- [ ] Add instructions on how to speed it up by caching the upstream dns queries.
+- [x] Add instructions on how to speed it up by caching the upstream dns queries.
 - [x] Add a `HealthCheck` instruction to indicate the expiration status of certs.
 - [ ] Add a command for checking the expire status.
 - [ ] Use another container to rotate the keys.

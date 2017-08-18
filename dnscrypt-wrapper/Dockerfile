@@ -37,7 +37,7 @@ RUN set -ex; \
     # for chroot
     #usermod -d '/usr/local/var/dnscrypt-wrapper' "${RUN_AS_USER}"; \
     #chown "${RUN_AS_USER}":"${RUN_AS_USER}" /usr/local/var/dnscrypt-wrapper; \
-    # cleaning
+    # do some cleanup
     apk del --purge .build-deps; \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /usr/local/src/*;
 
@@ -55,8 +55,8 @@ ENV LISTEN_PORT='12345' \
     KEYS_DIR='/usr/local/etc/dnscrypt-wrapper'
 ENV CRYPT_KEYS_DIR="${KEYS_DIR}/crypt"
 
-HEALTHCHECK --interval=1h --timeout=3s \
-    CMD [[ $(/usr/bin/find "${CRYPT_KEYS_DIR}" -name '*.key' -type f -mmin -$(expr "${CRYPT_KEYS_LIFESPAN}" \* 1440 \* 7 / 10) -print | wc -l | sed 's|[^0-9]||g') -eq 0 ]] && exit 1 || exit 0
+HEALTHCHECK --interval=15m --timeout=3s --start-period=10s \
+    CMD [[ $(/usr/bin/find "${CRYPT_KEYS_DIR}" -name '*.key' -type f -mmin -$(expr "${CRYPT_KEYS_LIFESPAN}" \* 1440 \* 7 / 10) -print | wc -l | sed 's|[^0-9]||g') -eq 0 ]] && exit 1
 STOPSIGNAL SIGKILL
 
 EXPOSE ${LISTEN_PORT}/tcp ${LISTEN_PORT}/udp

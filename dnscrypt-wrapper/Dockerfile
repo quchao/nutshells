@@ -55,7 +55,7 @@ ENV LISTEN_PORT='12345' \
     KEYS_DIR='/usr/local/etc/dnscrypt-wrapper'
 ENV CRYPT_KEYS_DIR="${KEYS_DIR}/crypt"
 
-HEALTHCHECK --interval=15m --timeout=3s --start-period=10s \
+HEALTHCHECK --interval=15m --timeout=3s \
     CMD [[ $(/usr/bin/find "${CRYPT_KEYS_DIR}" -name '*.key' -type f -mmin -$(expr "${CRYPT_KEYS_LIFESPAN}" \* 1440 \* 7 / 10) -print | wc -l | sed 's|[^0-9]||g') -eq 0 ]] && exit 1
 STOPSIGNAL SIGKILL
 

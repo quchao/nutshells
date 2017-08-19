@@ -80,7 +80,7 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN set -ex; \
     chmod +x /usr/local/bin/docker-entrypoint.sh;
 
-HEALTHCHECK --interval=1m --timeout=3s --start-period=10s \
+HEALTHCHECK --interval=1m --timeout=3s \
     CMD [[ -n "$(dig @127.0.0.1 +time=3 +short -p "${LISTEN_PORT}" google.com)" ]] || exit 1
 
 EXPOSE ${LISTEN_PORT}/udp

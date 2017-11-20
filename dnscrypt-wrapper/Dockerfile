@@ -4,7 +4,7 @@ LABEL maintainer 'Chao QU <mail@quchao.com>'
 ARG DNSCRYPT_SHA256='6bd025d17411c2e220c3a70f8bcb3188f08a79b40020e51b1749b791269c7d77'
 ARG DNSCRYPT_VERSION='0.3'
 
-WORKDIR '/usr/local/src/'
+WORKDIR /usr/local/src/
 
 RUN set -ex; \
     # build deps
@@ -55,8 +55,8 @@ ENV LISTEN_PORT='12345' \
     KEYS_DIR='/usr/local/etc/dnscrypt-wrapper'
 ENV CRYPT_KEYS_DIR="${KEYS_DIR}/crypt"
 
-HEALTHCHECK --interval=15m --timeout=3s \
-    CMD [[ $(/usr/bin/find "${CRYPT_KEYS_DIR}" -name '*.key' -type f -mmin -$(expr "${CRYPT_KEYS_LIFESPAN}" \* 1440 \* 7 / 10) -print | wc -l | sed 's|[^0-9]||g') -eq 0 ]] && exit 1
+HEALTHCHECK --interval=1m --timeout=3s \
+    CMD [[ "$(/usr/bin/find "${CRYPT_KEYS_DIR}" -maxdepth 1 -type f -name '*.key' -mmin -"$((CRYPT_KEYS_LIFESPAN * 1440 * 7 / 10))" -print | wc -l | sed 's|[^0-9]||g')" -ne 0 ]] || exit 1
 STOPSIGNAL SIGKILL
 
 EXPOSE ${LISTEN_PORT}/tcp ${LISTEN_PORT}/udp

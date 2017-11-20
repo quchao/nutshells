@@ -7,9 +7,9 @@
 
 | Tag | Description | 🐳 |
 |:-- |:-- |:--:|
-| `:latest` | Based on `alpine:latest`, includes a handy tool named [su-exec](https://github.com/ncopa/su-exec/) to exec cmds with different privileges in containers. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile/) |
-| `:edge` | Based on `alpine:edge`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-edge-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-edge/) |
-| `:centos` | Based on `centos:latest` with [EPEL](https://fedoraproject.org/wiki/EPEL) & [gosu](https://github.com/tianon/gosu/) pre-installed. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-centos-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-centos/) |
+| `:latest` | Based on `alpine:latest`, includes a handy tool named [su-exec](https://github.com/ncopa/su-exec/) to exec cmds with different privileges in containers. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?maxAge=2592000&style=flat-square)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile/) |
+| `:edge` | Based on `alpine:edge`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-edge-22B8EB.svg?maxAge=2592000&style=flat-square)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-edge/) |
+| `:centos` | Based on `centos:latest` with [EPEL](https://fedoraproject.org/wiki/EPEL) & [gosu](https://github.com/tianon/gosu/) pre-installed. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-centos-22B8EB.svg?maxAge=2592000&style=flat-square)](https://github.com/QuChao/nutshells/blob/master/base/Dockerfile-centos/) |
 
 
 ## Usage
@@ -21,14 +21,15 @@
 You may want to make some modifications to the image.
 Pull the source code from GitHub, customize it, then build one by yourself:
 
-> Get `<:img_tag>` & `<dockerfile_name>` from [this sheet](#variants).
+> Get `<img_tag>` & `<dockerfile_name>` from [this sheet](#variants).
 
 ``` bash
 git clone --depth 1 https://github.com/quchao/nutshells.git
-docker build -q=false --rm=true --no-cache=true \
-             -t nutshells/base<:img_tag> \
-             -f ./base/<dockerfile_name> \
-             ./base
+docker image build \
+       -q=false --rm=true --no-cache=true \
+       -t nutshells/base<img_tag> \
+       -f ./base/<dockerfile_name> \
+       ./base
 ```
 
 #### By committing the changes on a container
@@ -36,15 +37,13 @@ docker build -q=false --rm=true --no-cache=true \
 Otherwise just pull the image from the official registry, start a container and get a shell to it, [commit the changes](https://docs.docker.com/engine/reference/commandline/commit/) afterwards.
 
 ``` bash
-docker pull nutshells/base
-docker run -it --name=base nutshells/base /bin/ash
-docker commit --change "Commit msg" base nutshells/base
+docker container commit --change "Commit msg" <container_name> nutshells/base
 ```
 
 
 ## Contributing
 
-[![Github Starts](https://img.shields.io/github/stars/quchao/nutshells.svg?style=social&label=Star&maxAge=3600)](https://github.com/quchao/nutshells/) [![Twitter Followers](https://img.shields.io/twitter/follow/chappell.svg?style=social&label=Follow&maxAge=3600)](https://twitter.com/chappell/)
+[![Github Starts](https://img.shields.io/github/stars/quchao/nutshells.svg?maxAge=3600&style=social&label=Star)](https://github.com/quchao/nutshells/) [![Twitter Followers](https://img.shields.io/twitter/follow/chappell.svg?maxAge=3600&style=social&label=Follow)](https://twitter.com/chappell/)
 
 > Follow GitHub's [*How-to*](https://opensource.guide/how-to-contribute/) guide for the basis.
 
@@ -58,8 +57,8 @@ Contributions are always welcome in many ways:
 
 ## Todo
 
-- [ ] Add a commonly used utility script.
-- [ ] Rewrite the READMEs according to the new sub-commands since docker 1.13+.
+- [x] Extract common code of entrypoint script into a shared lib.
+- [x] Rewrite the examples according to the new sub-commands since docker 1.13+.
 
 ## Acknowledgments & Licenses
 

@@ -4,30 +4,16 @@ set -eo pipefail
 # constants
 readonly ARGS="$@"
 
-# funcs
-throw_exception() {
-    local _LEVEL="${1:-INFO}"
-    shift
-    echo -e "\n[${_LEVEL}]\n$(date +'%Y-%m-%dT%H:%M:%S%z')\n$*" >&2
-}
-
-info() {
-    throw_exception 'INFO' "$*"
-}
-
-warning() {
-    throw_exception 'WARNING' "$*"
-}
-
-error() {
-    throw_exception 'ERROR' "$*"
-}
-
-fatal() {
-    throw_exception 'FATAL' "$*"
+# includes
+readonly UTILS_FILE='/usr/local/bin/entrypoint-utils.sh'
+if [[ -f "${UTILS_FILE}" ]]; then
+    source "${UTILS_FILE}"
+else
+    echo -e "${UTILS_FILE} is missing!" >&2
     exit 1
-}
+fi
 
+# funcs
 parse_cmd() {
     # debug
     #info "${FUNCNAME}" "$*"
@@ -47,14 +33,10 @@ parse_cmd() {
         ${_ARGS}
 }
 
-cleanup() {
-    info 'Entrypoint Script ended.'
-}
-
 main() {
     # env check
     [[ -n ${RUN_AS_USER} ]] \
-        || throw_error "This script is only compatible with project nutshells images,\ndon't try to run it out straight."
+        || fatal "This script is only compatible with project nutshells images,\ndon't try to run it out straight."
 
     parse_cmd ${ARGS}
 }

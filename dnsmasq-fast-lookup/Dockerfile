@@ -1,7 +1,7 @@
 FROM nutshells/base
 LABEL maintainer 'Chao QU <mail@quchao.com>'
 
-WORKDIR '/usr/local/src/'
+WORKDIR /usr/local/src/
 
 ARG DNSMASQ_COMMIT='3390db4'
 ARG DNSMASQ_SHA256='9b1a08c5c6fa55784a21db7019bba16d07c8a6d57ec8029d1b52becb9e5626e1'
@@ -51,11 +51,11 @@ RUN set -ex; \
     make; \
     # install w/o manpage
     #make install; \
-    mkdir '/usr/local/sbin/'; \
-    cp src/dnsmasq '/usr/local/sbin/'; \
+    mkdir /usr/local/sbin/; \
+    cp src/dnsmasq /usr/local/sbin/; \
     # config loader
     mkdir -p "${CFG_DIR}"; \
-    echo "conf-dir=${CFG_DIR},*.conf" >> '/etc/dnsmasq.conf'; \
+    echo "conf-dir=${CFG_DIR},*.conf" >> /etc/dnsmasq.conf; \
     # tailer the sample confs
     mkdir -p "${SAMPLE_CFG_DIR}"; \
     # build with DNSSEC enabled, pt.2
@@ -86,5 +86,5 @@ HEALTHCHECK --interval=1m --timeout=3s \
 EXPOSE ${LISTEN_PORT}/udp
 
 #VOLUME [ "${CFG_DIR}" ]
-WORKDIR '/usr/local/var/dnsmasq'
+WORKDIR /usr/local/var/dnsmasq
 ENTRYPOINT [ "docker-entrypoint.sh" ]

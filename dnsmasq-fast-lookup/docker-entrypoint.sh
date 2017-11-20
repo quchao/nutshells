@@ -5,39 +5,16 @@ set -eo pipefail
 readonly ARGS="$@"
 readonly ENTRYPOINT_CMD='/usr/local/sbin/dnsmasq'
 
-# funcs
-throw_exception() {
-    local _LEVEL="${1:-INFO}"
-    shift
-    echo -e "\n[${_LEVEL}]\n$(date +'%Y-%m-%dT%H:%M:%S%z')\n$*" >&2
-}
-
-info() {
-    throw_exception 'INFO' "$*"
-}
-
-warning() {
-    throw_exception 'WARNING' "$*"
-}
-
-error() {
-    throw_exception 'ERROR' "$*"
-}
-
-fatal() {
-    throw_exception 'FATAL' "$*"
+# includes
+readonly UTILS_FILE='/usr/local/bin/entrypoint-utils.sh'
+if [[ -f "${UTILS_FILE}" ]]; then
+    source "${UTILS_FILE}"
+else
+    echo -e "${UTILS_FILE} is missing!" >&2
     exit 1
-}
+fi
 
-get_flag(){
-    local _FLG_NAME="${1:-unknown}"
-    if [[ "${#_FLG_NAME}" -eq 1 ]] ; then
-        echo "-${_FLG_NAME}"
-    else
-        echo "--${_FLG_NAME}"
-    fi
-}
-
+# funcs
 halt(){
     local _FLG
     _FLG="$(get_flag "$2")"
@@ -184,10 +161,6 @@ parse_cmd() {
             cmd_start ${_ARGS}
             ;;
     esac
-}
-
-cleanup() {
-    info 'Entrypoint Script ended.'
 }
 
 main() {

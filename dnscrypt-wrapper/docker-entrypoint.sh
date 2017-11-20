@@ -11,39 +11,16 @@ readonly PRI_KEY_FILENAME="secret.key"
 readonly PUB_KEY="${KEYS_DIR}/${PUB_KEY_FILENAME}"
 readonly PRI_KEY="${KEYS_DIR}/${PRI_KEY_FILENAME}"
 
-# funcs
-throw_exception() {
-    local _LEVEL="${1:-INFO}"
-    shift
-    echo -e "\n[${_LEVEL}]\n$(date +'%Y-%m-%dT%H:%M:%S%z')\n$*" >&2
-}
-
-info() {
-    throw_exception 'INFO' "$*"
-}
-
-warning() {
-    throw_exception 'WARNING' "$*"
-}
-
-error() {
-    throw_exception 'ERROR' "$*"
-}
-
-fatal() {
-    throw_exception 'FATAL' "$*"
+# includes
+readonly UTILS_FILE='/usr/local/bin/entrypoint-utils.sh'
+if [[ -f "${UTILS_FILE}" ]]; then
+    source "${UTILS_FILE}"
+else
+    echo -e "${UTILS_FILE} is missing!" >&2
     exit 1
-}
+fi
 
-get_flag(){
-    local _FLG_NAME="${1:-unknown}"
-    if [[ "${#_FLG_NAME}" -eq 1 ]] ; then
-        echo "-${_FLG_NAME}"
-    else
-        echo "--${_FLG_NAME}"
-    fi
-}
-
+# funcs
 halt(){
     local _FLG
     _FLG="$(get_flag "$2")"
@@ -379,16 +356,12 @@ parse_cmd() {
     esac
 }
 
-cleanup() {
-    info 'Entrypoint Script ended.'
-}
-
 main() {
     #info "${FUNCNAME}" "${ARGS}"
 
     # env check
     [[ -n "${LISTEN_PORT}" && -n "${RUN_AS_USER}" && -x "${ENTRYPOINT_CMD}" ]] \
-        || fatal "This script is only compatible with the nutshells/dnscrypt-wrapper image,\ndo NOT try to run it out straight."
+        || fatal 'This script is only compatible with the nutshells/dnscrypt-wrapper image,\ndo NOT try to run it out straight.'
 
     parse_cmd ${ARGS}
 }

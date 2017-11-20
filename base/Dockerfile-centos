@@ -25,7 +25,7 @@ RUN set -ex; \
 	yum clean all; \
     rm -rf /tmp/* /var/tmp/*;
 
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY docker-entrypoint.sh entrypoint-utils.sh /usr/local/bin/
 
 ARG RUN_AS_USER
 ENV RUN_AS_USER="${RUN_AS_USER:-nutshell}"

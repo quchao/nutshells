@@ -1,16 +1,16 @@
 # DNSCrypt-Wrapper Docker Image
 
-[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/dnscrypt-wrapper.svg?maxAge=3600&label=Build%20Status)](https://hub.docker.com/r/nutshells/dnscrypt-wrapper/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg)](https://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![dnscrypt-wrapper](https://img.shields.io/badge/DNSCrypt--Wrapper-0.3-lightgrey.svg)](https://github.com/cofyc/dnscrypt-wrapper/)
+[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg?maxAge=2592000)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/dnscrypt-wrapper.svg?maxAge=3600&label=Build%20Status)](https://hub.docker.com/r/nutshells/dnscrypt-wrapper/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg?maxAge=2592000)](https://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?maxAge=2592000&label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![dnscrypt-wrapper](https://img.shields.io/badge/DNSCrypt--Wrapper-0.3-lightgrey.svg?maxAge=2592000)](https://github.com/cofyc/dnscrypt-wrapper/)
 
 [DNSCrypt-Wrapper](https://github.com/cofyc/dnscrypt-wrapper/) is the server-end of [DNSCrypt](http://dnscrypt.org/) proxy, which is a protocol to improve DNS security, now with xchacha20 cipher support.
-This image includes certficate management & rotation.
+This image features certficate management & rotation.
 
 
 ## Variants:
 
 | Tag | Description | 🐳 |
 |:-- |:-- |:--:|
-| `:latest` | DNSCrypt-Wrapper `0.3` on `alpine:latest`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?style=flat-square&maxAge=2592000)](https://github.com/QuChao/nutshells/blob/master/dnscrypt-wrapper/Dockerfile/) |
+| `:latest` | DNSCrypt-Wrapper `0.3` on `alpine:latest`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?maxAge=2592000&style=flat-square)](https://github.com/quchao/nutshells/blob/master/dnscrypt-wrapper/Dockerfile/) |
 
 
 ## Usage
@@ -18,10 +18,14 @@ This image includes certficate management & rotation.
 ### Synopsis
 
 ```
-docker run [OPTIONS] nutshells/dnscrypt-wrapper [COMMAND] [ARG...]
+docker container run [OPTIONS] nutshells/dnscrypt-wrapper [COMMAND] [ARG...]
 ```
 
-> Learn more about `docker run` [here](https://docs.docker.com/engine/reference/commandline/run/).
+- Learn more about `docker container run` and its `OPTIONS` [here](https://docs.docker.com/edge/engine/reference/commandline/container_run/);
+- List all available `COMMAND`s: 
+    `docker container run --rm --read-only nutshells/dnscrypt-wrapper help`
+- List all `ARG`s:
+    `docker container run --rm --read-only nutshells/dnscrypt-wrapper --help`
 
 ### Getting Started
 
@@ -32,11 +36,11 @@ It's rather easy to generate a new pair by running the `init` [command](#command
 > The provider key pair should NEVER be changed as you may inform the world of the public key, unless the secret key is compromised.
 
 ``` bash
-docker run -d -p 5353:12345/udp -p 5353:12345/tcp \
-           --name=dnscrypt-server --restart=unless-stopped --read-only \
-           --mount=type=bind,src=<keys_dir>,dst=/usr/local/etc/dnscrypt-wrapper \
-           nutshells/dnscrypt-wrapper \
-           init
+docker container run -d -p 5353:12345/udp -p 5353:12345/tcp \
+       --name=dnscrypt-server --restart=unless-stopped --read-only \
+       --mount=type=bind,src=<keys_dir>,dst=/usr/local/etc/dnscrypt-wrapper \
+       nutshells/dnscrypt-wrapper \
+       init
 ```
 
 Now, a server is initialized with [default settings](#environment-variables) and running on port `5353` as a daemon.
@@ -44,7 +48,7 @@ Now, a server is initialized with [default settings](#environment-variables) and
 Dig the *public key* fingerprint out of logs:
 
 ``` bash
-docker logs dnscrypt-server | grep --color 'Provider public key: '
+docker container logs dnscrypt-server | grep --color 'Provider public key: '
 ```
 
 Then [see if it works](#how-to-test).
@@ -58,10 +62,10 @@ If you used to run a DNScrypt proxy server and have been keeping the keys secure
 Lost the *public key* fingerprint but couldn't find it from logs? Try the `pubkey` command:
 
 ``` bash
-docker run --rm --read-only \
-           --mount=type=bind,src=<keys_dir>,dst=/usr/local/etc/dnscrypt-wrapper \
-           nutshells/dnscrypt-wrapper \
-           pubkey
+docker container run --rm --read-only \
+       --mount=type=bind,src=<keys_dir>,dst=/usr/local/etc/dnscrypt-wrapper \
+       nutshells/dnscrypt-wrapper \
+       pubkey
 ```
 
 ### How to test
@@ -82,45 +86,48 @@ dig -p 53 +tcp google.com @127.0.0.1
 
 ### Utilities
 
-Check the version:
+As you can see from the examples of the previous sections: the container accepts original [command-line options](https://github.com/shadowsocks/shadowsocks-libev/#usage) of *ss-libev* as arguments.
+
+Here are a few more examples:
+
+#### Printing the version:
 
 ``` bash
-docker run --rm --read-only nutshells/dnscrypt-wrapper --version
+docker container run --rm --read-only nutshells/dnscrypt-wrapper --version
 ```
 
-Print its original options :
-
-> Please be informed that **some** of the listed options are managed by the container intentionally, you will encounter an exception while trying to set any of them, please follow the exception message to get rid of it.
-> If you do want to change the options, use these [environment variables](#environment-variables) instead.
+#### Enabling verbose mode:
 
 ``` bash
-docker run --rm --read-only nutshells/dnscrypt-wrapper --help
+docker container run [OPTIONS] nutshells/dnscrypt-wrapper [COMMAND] [ARG...] -V
 ```
 
-Show verbose outputs (by adding the `-V` option):
+#### Printing command-line options:
 
 ``` bash
-docker run [OPTIONS] nutshells/dnscrypt-wrapper [COMMAND] [ARG...] -V
+docker container run --rm --read-only nutshells/dnscrypt-wrapper --help
 ```
+
+However, please be informed that **some** of the options are managed by [the entrypoint script](https://github.com/quchao/nutshells/blob/master/dnscrypt-wrapper/docker-entrypoint.sh) of the container. You will encounter an error while trying to set any of them, just use the [environment variables](#environment-variables) instead; as for other exceptions, just follow the message to get rid of them.
 
 
 ## Reference
 
 ### Environment Variables
 
-Since some certain options of `dnscrypt-wrapper` will be handled by [the entrypoint script](https://github.com/quchao/nutshells/blob/master/dnscrypt-wrapper/docker-entrypoint.sh) of the container, you can *ONLY* customize them by setting the environment variables below:
-
 | Name | Default | Relevant Option | Description |
 |:-- |:-- |:-- |:-- |
-| `RESOLVER_IP` | `8.8.8.8` | `-r`, `--resolver-address` | Upstream dns resolver server IP |
-| `RESOLVER_PORT` | `53` | `-r`, `--resolver-address` | Upstream dns resolver server port |
-| `PROVIDER_BASENAME` | `example.com` | `--provider-name` | Basename of the provider, which forms the whole provide name with a prefix `2.dnscrypt-cert.` |
+| `RESOLVER_IP` | `8.8.8.8` | `-r`, `--resolver-address` | Hostname or IP address of the upstream dns resolver. |
+| `RESOLVER_PORT` | `53` | `-r`, `--resolver-address` | Port number of the upstream dns resolver. |
+| `PROVIDER_BASENAME` | `example.com` | `--provider-name` | Basename of the provider, which forms the whole provide name with a prefix `2.dnscrypt-cert.`. |
 | `CRYPT_KEYS_LIFESPAN` | `365` | `--cert-file-expire-days` | For how long (in days) the crypt key & certs would be valid. Refer to [this topic](#rotating-the-crypt-key-and-certs) to automate the rotation. |
 
 For instance, if you want to use [OpenDNS](https://www.opendns.com) as the upstream DNS resolver other than [Google's Public DNS](https://developers.google.com/speed/public-dns/), the default one, just [set an environment variable](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e-env-env-file) like this:
 
 ```
-docker run -e RESOLVER_IP=208.67.222.222 -e RESOLVER_PORT=5353 ...
+docker container run \
+       -e RESOLVER_IP=208.67.222.222 -e RESOLVER_PORT=5353 \
+       [OTHER_OPTIONS] ...
 ```
 
 ### Data Volumes
@@ -128,14 +135,6 @@ docker run -e RESOLVER_IP=208.67.222.222 -e RESOLVER_PORT=5353 ...
 | Path in Container | Description | Mount as Writeable |
 |:-- |:-- |:--:|
 | `/usr/local/etc/dnscrypt-wrapper` | Directory where keys are stored | Y |
-
-### Commands
-
-List available commands:
-
-```
-docker run --rm --read-only nutshells/dnscrypt-wrapper help
-```
 
 
 ## Advanced Topics
@@ -156,17 +155,17 @@ Firstly, let's create a new bridge network named `dnscrypt`:
 docker network create dnscrypt
 ```
 
-Secondly, create a *dnsmasq* container into the network with the cache size increased:
+Secondly, create a *dnsmasq* container (as an *upstream* resolver) into the network with an increased cache size:
 
 > Refer to [this page](https://hub.docker.com/r/nutshells/dnsmasq-fast-lookup/) for more about the `nutshells/dnsmasq-fast-lookup` image.
 
 ``` bash
-docker run -d --network=dnscrypt \
-           --name=dnsmasq --restart=unless-stopped --read-only \
-           nutshells/dnsmasq-fast-lookup \
-           --domain-needed --bogus-priv \
-           --server=8.8.8.8 --no-resolv --no-hosts \
-           --cache-size=10240
+docker container run -d --network=dnscrypt --network-alias=upstream \
+       --name=upstream --restart=unless-stopped --read-only \
+       nutshells/dnsmasq-fast-lookup \
+       --domain-needed --bogus-priv \
+       --server=8.8.8.8 --no-resolv --no-hosts \
+       --cache-size=10240
 ```
 
 Then start a *dnscrypt server* into the same network too:
@@ -174,13 +173,13 @@ Then start a *dnscrypt server* into the same network too:
 > To add an existing container into the network, use [`docker network connect`](https://docs.docker.com/engine/userguide/networking/#user-defined-networks) please.
 
 ``` bash
-docker run -d --network=dnscrypt \
-           -p 5353:12345/udp -p 5353:12345/tcp \
-           --name=dnscrypt-server --restart=unless-stopped --read-only \
-           --mount=type=bind,src=<keys_dir>,dst=/usr/local/etc/dnscrypt-wrapper \
-           -e RESOLVER_IP="upstream" -e RESOLVER_PORT="12345" \
-           nutshells/dnscrypt-wrapper \
-           init
+docker container run -d --network=dnscrypt \
+       -p 5353:12345/udp -p 5353:12345/tcp \
+       --name=dnscrypt-server --restart=unless-stopped --read-only \
+       --mount=type=bind,src=<keys_dir>,dst=/usr/local/etc/dnscrypt-wrapper \
+       -e RESOLVER_IP=upstream -e RESOLVER_PORT=12345 \
+       nutshells/dnscrypt-wrapper \
+       init
 ```
 
 Done!
@@ -196,7 +195,7 @@ and now you want to locate the secret key in the anonymous volume,
 just do some inspection first:
 
 ``` bash
-docker inspect -f '{{json .Mounts }}' dnscrypt-server | grep --color '"Source":'
+docker container inspect -f '{{json .Mounts }}' dnscrypt-server | grep --color '"Source":'
 ```
 
 Then backup it securely.
@@ -213,21 +212,21 @@ Firstly, shrink [the cert's lifespan](#environment-variables) to `7` days:
 > Actually the rotation starts when the validity remaining is under `30%`, which would be on day `5` in this case.
 
 ```
-docker run -e CRYPT_KEYS_LIFESPAN=7 ...
+docker container run -e CRYPT_KEYS_LIFESPAN=7 ...
 ```
 
 Secondly, restart the container every single day by creating a daily cronjob:
 
 ``` bash
-0 4 * * * docker restart dnscrypt-server
+0 4 * * * docker container restart dnscrypt-server
 ```
 
 ### Gaining a shell access
 
-Get an interactive shell to the container by overwritting the default entrypoint:
+Get an interactive shell to a **running** container:
 
 ``` bash
-docker run -it --rm --entrypoint=/bin/ash nutshells/dnscrypt-wrapper
+docker container exec -it dnscrypt-server /bin/ash
 ```
 
 ### Customizing the image
@@ -239,7 +238,7 @@ Pull the source code from GitHub, customize it, then build one by yourself:
 
 ``` bash
 git clone --depth 1 https://github.com/quchao/nutshells.git
-docker build -q=false --rm=true --no-cache=true \
+docker image build -q=false --rm=true --no-cache=true \
              -t nutshells/dnscrypt-wrapper \
              -f ./dnscrypt-wrapper/Dockerfile \
              ./dnscrypt-wrapper
@@ -250,9 +249,7 @@ docker build -q=false --rm=true --no-cache=true \
 Otherwise just pull the image from the official registry, start a container and [get a shell](#gaining-a-shell-access) to it, [commit the changes](https://docs.docker.com/engine/reference/commandline/commit/) afterwards.
 
 ``` bash
-docker pull nutshells/dnscrypt-wrapper
-docker run -it --name=dnscrypt-server --entrypoint=/bin/ash nutshells/dnscrypt-wrapper
-docker commit --change "Commit msg" dnscrypt-server nutshells/dnscrypt-wrapper
+docker container commit --change "Commit msg" dnscrypt-server nutshells/dnscrypt-wrapper
 ```
 
 
@@ -265,13 +262,13 @@ Status of this container-specified health check merely indicates whether the cry
 To confirm the status, run this command:
 
 ``` bash
-docker inspect --format='{{json .State.Health.Status}}' dnscrypt-server
+docker container inspect --format='{{json .State.Health.Status}}' dnscrypt-server
 ```
 
 And to check the logs:
 
 ``` bash
-docker inspect --format='{{json .State.Health}}' dnscrypt-server | python -m json.tool
+docker container inspect --format='{{json .State.Health}}' dnscrypt-server | python -m json.tool
 ```
 
 If you think this is annoying, just add [the `--no-healthcheck` option](https://docs.docker.com/engine/reference/run/#healthcheck) to disable it.
@@ -279,7 +276,7 @@ If you think this is annoying, just add [the `--no-healthcheck` option](https://
 
 ## Contributing
 
-[![Github Starts](https://img.shields.io/github/stars/quchao/nutshells.svg?style=social&label=Star&maxAge=3600)](https://github.com/quchao/nutshells/) [![Twitter Followers](https://img.shields.io/twitter/follow/chappell.svg?style=social&label=Follow&maxAge=3600)](https://twitter.com/chappell/)
+[![Github Starts](https://img.shields.io/github/stars/quchao/nutshells.svg?maxAge=3600&style=social&label=Star)](https://github.com/quchao/nutshells/) [![Twitter Followers](https://img.shields.io/twitter/follow/chappell.svg?maxAge=3600&style=social&label=Follow)](https://twitter.com/chappell/)
 
 > Follow GitHub's [*How-to*](https://opensource.guide/how-to-contribute/) guide for the basis.
 
@@ -308,7 +305,7 @@ Other relevant softwares:
 
 | Ware/Lib | License |
 |:-- |:--:|
-| [Docker](https://www.docker.com/) | [![License](https://img.shields.io/github/license/moby/moby.svg?maxAge=2592000&label=License)](https://github.com/moby/moby/blob/master/LICENSE/) |
+| [Docker](https://www.docker.com/) | [![License](https://img.shields.io/github/license/moby/moby.svg?maxAge=2592000&label=License)](https://github.com/moby/moby/blob/master/LICENSE) |
 | [DNSCrypt-Proxy](https://github.com/jedisct1/dnscrypt-proxy) | [![License](https://img.shields.io/badge/License-ISC_License-blue.svg?maxAge=2592000)](https://github.com/jedisct1/dnscrypt-proxy/blob/master/COPYING) |
-| [DNSCrypt-Wrapper](https://github.com/cofyc/dnscrypt-wrapper/) | [![License](https://img.shields.io/badge/License-ISC_License-blue.svg?maxAge=2592000)](https://github.com/cofyc/dnscrypt-wrapper/blob/master/COPYING/) |
-| [DNSCrypt-Server-Docker](https://github.com/jedisct1/dnscrypt-server-docker/) | [![License](https://img.shields.io/github/license/jedisct1/dnscrypt-server-docker.svg?maxAge=2592000&label=License)](https://github.com/jedisct1/dnscrypt-server-docker/blob/master/LICENSE/) |
+| [DNSCrypt-Wrapper](https://github.com/cofyc/dnscrypt-wrapper/) | [![License](https://img.shields.io/badge/License-ISC_License-blue.svg?maxAge=2592000)](https://github.com/cofyc/dnscrypt-wrapper/blob/master/COPYING) |
+| [DNSCrypt-Server-Docker](https://github.com/jedisct1/dnscrypt-server-docker/) | [![License](https://img.shields.io/github/license/jedisct1/dnscrypt-server-docker.svg?maxAge=2592000&label=License)](https://github.com/jedisct1/dnscrypt-server-docker/blob/master/LICENSE) |

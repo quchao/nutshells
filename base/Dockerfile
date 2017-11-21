@@ -18,15 +18,20 @@ RUN set -ex; \
     # cleaning
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/*;
 
-COPY docker-entrypoint.sh entrypoint-utils.sh /usr/local/bin/
-
 ARG RUN_AS_USER
 ENV RUN_AS_USER="${RUN_AS_USER:-nutshell}"
 
 RUN set -ex; \
     # a low-privilege user
     addgroup -S "${RUN_AS_USER}"; \
-    adduser -S -D -H  -h /var/empty -s /sbin/nologin -G "${RUN_AS_USER}" "${RUN_AS_USER}"; \
+    adduser -S -D -H  -h /var/empty -s /sbin/nologin -G "${RUN_AS_USER}" "${RUN_AS_USER}";
+
+COPY docker-entrypoint.sh entrypoint-utils.sh /usr/local/bin/
+
+RUN set -ex; \
     # test flight
-	chmod +x /usr/local/bin/docker-entrypoint.sh; \
+	chmod +x /usr/local/bin/docker-entrypoint.sh;
+
+RUN set -ex; \
+    # avoid docker's 'Text file busy' issue
 	docker-entrypoint.sh /bin/true;

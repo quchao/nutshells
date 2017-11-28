@@ -9,14 +9,14 @@ RUN set -ex; \
     # keep up-to-date
     yum update -y --exclude=kernel*; \
     # gosu
-    ARCH='amd64'; \
-    GOSU_URL_BASE='https://github.com/tianon/gosu/releases/download/'; \
+    readonly ARCH='amd64'; \
+    readonly GOSU_URL_BASE='https://github.com/tianon/gosu/releases/download/'; \
 	curl -sSL -o /usr/bin/gosu "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}"; \
 	curl -sSL -o /tmp/gosu.asc "${GOSU_URL_BASE}${GOSU_VERSION}/gosu-${ARCH}.asc"; \
     # verify the signature
-    GPG_KEY_SRV='keys.gnupg.net'; \
-    GOSU_GPG_KEY='B42F6819007F00F88E364FD4036A9C25BF357DD4'; \
-	export GNUPGHOME="$(mktemp -d)"; \
+    readonly GPG_KEY_SRV='keys.gnupg.net'; \
+    readonly GOSU_GPG_KEY='B42F6819007F00F88E364FD4036A9C25BF357DD4'; \
+	readonly GNUPGHOME="$(mktemp -d)"; \
 	gpg --keyserver "${GPG_KEY_SRV}" --recv-keys "${GOSU_GPG_KEY}"; \
 	gpg --batch --verify /tmp/gosu.asc /usr/bin/gosu; \
 	rm -r "${GNUPGHOME}" /tmp/gosu.asc; \

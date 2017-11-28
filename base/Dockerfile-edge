@@ -1,5 +1,5 @@
 FROM alpine:edge
-LABEL maintainer 'Chao QU <mail@quchao.com>'
+LABEL maintainer='Chao QU <mail@quchao.com>'
 
 RUN set -ex; \
     # enable edge repos

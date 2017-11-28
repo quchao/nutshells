@@ -1,5 +1,5 @@
 FROM nutshells/base:centos
-LABEL maintainer "Chao QU <mail@quchao.com>"
+LABEL maintainer="Chao QU <mail@quchao.com>"
 
 ARG SS_VERSION="3.1.0"
 ARG SS_SHA256="3b6493ebdcfff1eb31faf34d164d57049f7253ff5bffafa6ce2263c9ac123f31"

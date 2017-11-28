@@ -1,5 +1,5 @@
 FROM nutshells/base
-LABEL maintainer 'Chao QU <mail@quchao.com>'
+LABEL maintainer='Chao QU <mail@quchao.com>'
 
 WORKDIR /usr/local/src/
 

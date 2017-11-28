@@ -1,5 +1,5 @@
 FROM centos
-LABEL maintainer 'Chao QU <mail@quchao.com>'
+LABEL maintainer='Chao QU <mail@quchao.com>'
 
 ARG GOSU_VERSION='1.10'
 

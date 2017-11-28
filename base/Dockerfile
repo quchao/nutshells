@@ -1,5 +1,5 @@
 FROM alpine
-LABEL maintainer 'Chao QU <mail@quchao.com>'
+LABEL maintainer='Chao QU <mail@quchao.com>'
 
 RUN set -ex; \
     # change mirrors

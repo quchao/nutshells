@@ -1,5 +1,5 @@
 FROM nutshells/base
-LABEL maintainer 'Chao QU <mail@quchao.com>'
+LABEL maintainer='Chao QU <mail@quchao.com>'
 
 ARG DNSCRYPT_SHA256='6bd025d17411c2e220c3a70f8bcb3188f08a79b40020e51b1749b791269c7d77'
 ARG DNSCRYPT_VERSION='0.3'

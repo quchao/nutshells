@@ -1,6 +1,6 @@
 # Base Image of Project Nutshells 🌰
 
-[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg?maxAge=2592000)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/base.svg?maxAge=3600&label=Build%20Status)](https://hub.docker.com/r/nutshells/base/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.6-0D597F.svg?maxAge=2592000)](https://alpinelinux.org/) [![CentOS Based](https://img.shields.io/badge/CentOS-7.3-932279.svg?maxAge=2592000)](https://www.centos.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?maxAge=2592000&label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE/)
+[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg?maxAge=2592000)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/base.svg?maxAge=3600&label=Build%20Status)](https://hub.docker.com/r/nutshells/base/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.7-0D597F.svg?maxAge=2592000)](https://alpinelinux.org/) [![CentOS Based](https://img.shields.io/badge/CentOS-7.5-932279.svg?maxAge=2592000)](https://www.centos.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?maxAge=2592000&label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE/)
 
 
 ## Variants:

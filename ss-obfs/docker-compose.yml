@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.4"
 services:
   ss-obfs:
     container_name: ss-obfs

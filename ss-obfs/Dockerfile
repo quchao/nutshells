@@ -1,12 +1,12 @@
 FROM nutshells/base
 LABEL maintainer='Chao QU <mail@quchao.com>'
 
-ARG SS_VERSION='3.1.1'
-ARG SS_SHA256='24a002c100fbe9b4481e3134273cb1a2f25a4026eb030760e7e7eb57f8466ef6'
+ARG SS_VERSION='3.2.0'
+ARG SS_SHA256='5521cf623a07fd1e393528516a83acd2b66c5d4bb4535a52662806a6a060c606'
 ARG OBFS_VERSION='0.0.5'
 ARG OBFS_SHA256='0de9b551b67ec82d0af9d09bcb74c9e8d047f0082ae07db8e4f5f3defeb2ce4c'
-ARG LIBCORK_COMMIT='29d7cba'
-ARG LIBCORK_SHA256='52be7bddaf4cbcf8635c616b69c1b89e776ad2b19458a3e8c80fc1c30b13f79d'
+ARG LIBCORK_COMMIT='9a1917d'
+ARG LIBCORK_SHA256='2193830fc67d946e89701d04d557e4b29bcb956f5cedfb90b727e23326045e78'
 ENV WITH_OBFS='true'
 
 WORKDIR /usr/local/src/
@@ -19,19 +19,19 @@ RUN set -ex; \
         autoconf \
         automake \
         libtool \
+        pcre-dev \
         mbedtls-dev \
-        libev-dev \
         libsodium-dev \
         c-ares-dev \
-        pcre-dev \
+        libev-dev \
     ; \
     # runtime deps
     apk add --no-cache --virtual .runtime-deps \
+        pcre \
         mbedtls \
-        libev \
         libsodium \
         c-ares \
-        pcre \
+        libev \
     ; \
     # ss-libev
     curl -sSLO "https://github.com/shadowsocks/shadowsocks-libev/releases/download/v${SS_VERSION}/shadowsocks-libev-${SS_VERSION}.tar.gz"; \

@@ -4,10 +4,9 @@ LABEL maintainer='Chao QU <mail@quchao.com>'
 RUN set -ex; \
     # change mirrors
     sed -i 's|http://dl-cdn.alpinelinux.org|https://mirrors.aliyun.com|g' /etc/apk/repositories; \
-    # keep update-to-date
-    apk update; \
-    apk upgrade; \
-    # runtime deps
+    # update the repo file & force upgrade the pkgs
+    apk upgrade --update-cache --available; \
+    # common deps
     apk add --no-cache --virtual .common-deps \
         ca-certificates \
         su-exec \
@@ -15,7 +14,7 @@ RUN set -ex; \
     ; \
     # reset CA list
     update-ca-certificates --fresh; \
-    # cleaning
+    # cleanup
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/*;
 
 ARG RUN_AS_USER

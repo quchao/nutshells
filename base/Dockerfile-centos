@@ -21,7 +21,7 @@ RUN set -ex; \
 	gpg --batch --verify /tmp/gosu.asc /usr/bin/gosu; \
 	rm -r "${GNUPGHOME}" /tmp/gosu.asc; \
 	chmod +x /usr/bin/gosu; \
-	# cleaning
+	# cleanup
 	yum clean all; \
     rm -rf /tmp/* /var/tmp/*;
 

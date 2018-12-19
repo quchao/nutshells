@@ -1,12 +1,12 @@
 FROM nutshells/base
 LABEL maintainer='Chao QU <mail@quchao.com>'
 
-ARG SS_VERSION='3.2.0'
-ARG SS_SHA256='5521cf623a07fd1e393528516a83acd2b66c5d4bb4535a52662806a6a060c606'
+ARG SS_VERSION='3.2.3'
+ARG SS_SHA256='2befc27b1cc62af0450702343d17e347936f0d4e3d4b04ba9246c4f9b409b742'
 ARG OBFS_VERSION='0.0.5'
 ARG OBFS_SHA256='0de9b551b67ec82d0af9d09bcb74c9e8d047f0082ae07db8e4f5f3defeb2ce4c'
-ARG LIBCORK_COMMIT='9a1917d'
-ARG LIBCORK_SHA256='2193830fc67d946e89701d04d557e4b29bcb956f5cedfb90b727e23326045e78'
+ARG LIBCORK_COMMIT='29d7cba'
+ARG LIBCORK_SHA256='52be7bddaf4cbcf8635c616b69c1b89e776ad2b19458a3e8c80fc1c30b13f79d'
 ENV WITH_OBFS='true'
 
 WORKDIR /usr/local/src/
@@ -24,14 +24,6 @@ RUN set -ex; \
         libsodium-dev \
         c-ares-dev \
         libev-dev \
-    ; \
-    # runtime deps
-    apk add --no-cache --virtual .runtime-deps \
-        pcre \
-        mbedtls \
-        libsodium \
-        c-ares \
-        libev \
     ; \
     # ss-libev
     curl -sSLO "https://github.com/shadowsocks/shadowsocks-libev/releases/download/v${SS_VERSION}/shadowsocks-libev-${SS_VERSION}.tar.gz"; \
@@ -70,7 +62,15 @@ RUN set -ex; \
         rm -f "simple-obfs-${OBFS_VERSION}.tar.gz"; \
         rm -rf "simple-obfs-${OBFS_VERSION}"; \
     fi; \
-    # do some cleanup
+    # runtime deps
+    apk add --no-cache --virtual .runtime-deps $( \
+       scanelf --needed --nobanner --recursive /usr/local \
+           | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+           | sort -u \
+           | xargs -r apk info --installed \
+           | sort -u \
+    ); \
+    # cleanup
     apk del --purge .build-deps; \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /usr/local/src/*;
 

@@ -92,17 +92,19 @@ However, please be informed that **some** of the options are managed by [the ent
 
 | Name | Default | Relevant Option | Description |
 |:-- |:-- |:-- |:-- |
-| `SERVER_ADDRESS` |  | `-s` | Hostname or IP address of the remote server. **Required** for `client` mode only. |
-| `SERVER_PORT` |  | `-p` | Port number of the remote server. **Required** for `client` mode only. |
+| `SERVER_ADDRESS` |  | `-s` | Hostname or IP address of the remote server. **Required** for `client` mode ONLY. |
+| `SERVER_PORT` |  | `-p` | Port number of the remote server. **Required** for `client` mode ONLY. |
 | `PASSWORD` |  | `-p` | Password of the remote server. **Required** if `KEY_IN_BASE64` is unset. |
 | `KEY_IN_BASE64` |  | `--key` | Base64 encoded password of the remote server. **Required** if `PASSWORD` is unset. |
 | `ENCRYPT_METHOD` | `xchacha20-ietf-poly1305` | `-m` | Encryption Algorithms. Modern ciphers such as `chacha20` or `aes-gcm` based are always recomended;  choose from the latter ones if the server is AES-NI enabled. |
+| `DNS_RESOLVERS` | `8.8.8.8,8.8.4.4` | `-d` | Name servers for internal DNS resolver. `server` mode ONLY. |
+| `TIMEOUT` | `300` | `-t` | Socket timeout in seconds. |
 | `TCP_RELAY` | `true` | `-u` & `-U` | Enable TCP relay. |
 | `UDP_RELAY` | `true` | `-u` & `-U` | Enable UDP relay. |
 | `REUSE_PORT` | `true` | `--reuse-port` | Enable port reuse. |
 | `TCP_FAST_OPEN` | `true` | `--fast-open` | Enable TCP fast open. |
 | `OBFS_PLUGIN` | `http` | `--plugin` | Traffic obscuration plugin. `http` or `tls`. |
-| `OBFS_HOST` | `bing.com` | `--plugin-opts` | Hostname for traffic obscuration. |
+| `OBFS_HOST` | `bing.com` | `--plugin-opts` | Hostname for traffic obscuration. `client` mode ONLY |
 
 Learn to set an environment variable [here](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e-env-env-file), or refer to the [Getting Started](#getting-started) section for some live examples.
 
@@ -201,6 +203,7 @@ Contributions are always welcome in many ways:
 
 - [ ] Add a section about modifying kernel parameters in containers.
 - [ ] Add a `HealthCheck` instruction.
+- [ ] Add ipv6 support.
 
 ## Acknowledgments & Licenses
 

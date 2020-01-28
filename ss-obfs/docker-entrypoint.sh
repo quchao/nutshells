@@ -68,7 +68,7 @@ check_opts() {
     # Ref: https://stackoverflow.com/a/28466267/519360
     local _LONG_OPTARG=
     local _OPTARG=
-    while getopts ':hf:s:p:l:k:m:uUL:a:i:b:-:' _OPTARG; do
+    while getopts ':hf:s:p:l:k:m:d:t:uUL:a:i:b:-:' _OPTARG; do
         case "${_OPTARG}" in
             h)
                 run_cmd 'true' ${_ARGS}
@@ -78,7 +78,7 @@ check_opts() {
                 halt 1 "${_OPTARG}"
                 break
                 ;;
-            s | p | l | k | m | u | U)
+            s | p | l | k | m | d | t | u | U)
                 halt 2 "${_OPTARG}"
                 break
                 ;;
@@ -146,7 +146,13 @@ cmd_start() {
         _ARGS="${_ARGS} --key ${KEY_IN_BASE64}"
     fi
 
+    # server mode
+    [[ -n "${DNS_RESOLVERS}" && "${SS_MODE}" == 'server' ]] \
+        && _ARGS="${_ARGS} -d ${DNS_RESOLVERS}"
+
     # other configs
+    [[ -n "${TIMEOUT}" ]] \
+        && _ARGS="${_ARGS} -t ${TIMEOUT}"
     [[ "${REUSE_PORT}" == 'true' ]] \
         && _ARGS="${_ARGS} --reuse-port"
     [[ "${TCP_FAST_OPEN}" == 'true' ]] \

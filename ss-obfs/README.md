@@ -1,6 +1,6 @@
 # SS-OBFS Docker Image
 
-[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/ss-obfs.svg?maxAge=3600&label=Build%20Status)](https://hub.docker.com/r/nutshells/ss-obfs/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.8-0D597F.svg)](https://alpinelinux.org/) [![CentOS Based](https://img.shields.io/badge/CentOS-7.6-932279.svg)](https://www.centos.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![SS-libev](https://img.shields.io/badge/shadowsocks--libev-3.2.3-lightgrey.svg)](https://github.com/shadowsocks/shadowsocks-libev/) [![Simple-obfs](https://img.shields.io/badge/Simple--obfs-0.0.5-lightgrey.svg)](https://github.com/shadowsocks/simple-obfs)
+[![Project Nutshells](https://img.shields.io/badge/Project-_Nutshells_🌰-orange.svg)](https://github.com/quchao/nutshells/) [![Docker Build Build Status](https://img.shields.io/docker/build/nutshells/ss-obfs.svg?maxAge=3600&label=Build%20Status)](https://hub.docker.com/r/nutshells/ss-obfs/) [![Alpine Based](https://img.shields.io/badge/Alpine-3.11-0D597F.svg)](https://alpinelinux.org/) [![MIT License](https://img.shields.io/github/license/quchao/nutshells.svg?label=License)](https://github.com/quchao/nutshells/blob/master/LICENSE) [![SS-libev](https://img.shields.io/badge/shadowsocks--libev-3.3.3-lightgrey.svg)](https://github.com/shadowsocks/shadowsocks-libev/) [![Simple-obfs](https://img.shields.io/badge/Simple--obfs-latest-lightgrey.svg)](https://github.com/shadowsocks/simple-obfs)
 
 This image combines [ss-libev](https://github.com/shadowsocks/shadowsocks-libev) and [simple-obfs](https://github.com/shadowsocks/simple-obfs) both with the server and client included.
 
@@ -10,7 +10,6 @@ This image combines [ss-libev](https://github.com/shadowsocks/shadowsocks-libev)
 | Tag | Description | 🐳 |
 |:-- |:-- |:--:|
 | `:latest` | Shadowsocks-libev & simple-obfs on `alpine:latest`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?maxAge=2592000&style=flat-square)](https://github.com/quchao/nutshells/blob/master/ss-obfs/Dockerfile/) |
-| `:centos` | Shadowsocks-libev & simple-obfs on `centos:latest`. | [![Dockerfile](https://img.shields.io/badge/Dockerfile-latest-22B8EB.svg?maxAge=2592000&style=flat-square)](https://github.com/quchao/nutshells/blob/master/ss-obfs/Dockerfile-centos/) |
 
 
 ## Usage
@@ -40,8 +39,8 @@ Let's create a *server* container on the remote server:
 docker container run \
        -d -p <remote_port>:12345/tcp -p <remote_port>:12345/udp \
        --name=ss-obfs-server --restart=unless-stopped --read-only \
-       -e PASSWORD=<password> \           
-       nutshells/ss-obfs
+       -e PASSWORD=<password> \
+       nutshells/ss-obfs \
        server
 ```
 
@@ -54,8 +53,8 @@ docker container run \
        -d -p 127.0.0.1:12345:12345/tcp -p 127.0.0.1:12345:12345/udp \
        --name=ss-obfs-client --restart=unless-stopped --read-only \
        -e PASSWORD=<password> \
-       -e SERVER_ADDRESS=<remote_address> -e SERVER_PORT=<remote_port> \           
-       nutshells/ss-obfs
+       -e SERVER_ADDRESS=<remote_address> -e SERVER_PORT=<remote_port> \
+       nutshells/ss-obfs \
        client
 ```
 
@@ -138,8 +137,6 @@ Additionally, the `--net=host` option provides the best network performance, use
 ### Gaining a shell access
 
 Get an interactive shell to a **running** container:
-
-> Run `/bin/bash` instead in the CentOS variants.
 
 ``` bash
 docker container exec -it <container_name> /bin/ash

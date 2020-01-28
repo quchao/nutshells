@@ -1,12 +1,12 @@
 FROM nutshells/base
 LABEL maintainer='Chao QU <mail@quchao.com>'
 
-ARG SS_VERSION='3.2.3'
-ARG SS_SHA256='2befc27b1cc62af0450702343d17e347936f0d4e3d4b04ba9246c4f9b409b742'
-ARG OBFS_VERSION='0.0.5'
-ARG OBFS_SHA256='0de9b551b67ec82d0af9d09bcb74c9e8d047f0082ae07db8e4f5f3defeb2ce4c'
-ARG LIBCORK_COMMIT='29d7cba'
-ARG LIBCORK_SHA256='52be7bddaf4cbcf8635c616b69c1b89e776ad2b19458a3e8c80fc1c30b13f79d'
+ARG SS_VERSION='3.3.3'
+ARG SS_SHA256='677356a5ed6b5ae9e32a898061db2587158ff27e245db03f4bde9b006ef12dc9'
+ARG OBFS_COMMIT='486bebd'
+ARG OBFS_SHA256='d717dc3389955633a2155b53a280c3982e30f7f890df9b4a32961040282fbf26'
+ARG LIBCORK_COMMIT='f029845'
+ARG LIBCORK_SHA256='0f1ede7bd23672718d1d10adbe9e4028515d029585b93092d7199e51a40b3fe4'
 ENV WITH_OBFS='true'
 
 WORKDIR /usr/local/src/
@@ -41,10 +41,11 @@ RUN set -ex; \
     rm -rf "shadowsocks-libev-${SS_VERSION}"; \
     if [ "${WITH_OBFS}" = 'true' ]; then \
         # simple-obfs
-        curl -sSLO "https://github.com/shadowsocks/simple-obfs/archive/v${OBFS_VERSION}.tar.gz"; \
-        echo "${OBFS_SHA256}  v${OBFS_VERSION}.tar.gz" | sha256sum -c -; \
-        tar xzf "v${OBFS_VERSION}.tar.gz"; \
-        cd "simple-obfs-${OBFS_VERSION}"; \
+        curl -sSLO "https://github.com/shadowsocks/simple-obfs/archive/${OBFS_COMMIT}.tar.gz"; \
+        echo "${OBFS_SHA256}  ${OBFS_COMMIT}.tar.gz" | sha256sum -c -; \
+        tar xzf "${OBFS_COMMIT}.tar.gz"; \
+        mv simple-obfs-* simple-obfs; \
+        cd simple-obfs; \
         # libcork
         rm -rf libcork; \
         curl -sSLO "https://github.com/shadowsocks/libcork/archive/${LIBCORK_COMMIT}.tar.gz"; \
@@ -59,8 +60,8 @@ RUN set -ex; \
         cp src/obfs-server src/obfs-local /usr/local/bin/; \
         #make installcheck; \
         cd ..; \
-        rm -f "simple-obfs-${OBFS_VERSION}.tar.gz"; \
-        rm -rf "simple-obfs-${OBFS_VERSION}"; \
+        rm -f "simple-obfs-${OBFS_COMMIT}.tar.gz"; \
+        rm -rf "simple-obfs-${OBFS_COMMIT}"; \
     fi; \
     # runtime deps
     apk add --no-cache --virtual .runtime-deps $( \
